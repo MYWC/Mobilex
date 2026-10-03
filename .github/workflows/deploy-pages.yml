@@ -1,0 +1,176 @@
+name: 🚀 Deploy Mobilex 2.0 to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 22
+  VITE_APP_ENV: production
+  VITE_PUBLIC_APP_URL: https://mywc.github.io/Mobilex/
+  VITE_PAYMENT_MODE: live
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy Mobilex
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # ---------------------------------------------------------
+      # 1) Checkout
+      # ---------------------------------------------------------
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v6
+
+      # ---------------------------------------------------------
+      # 2) Node.js
+      # ---------------------------------------------------------
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      # ---------------------------------------------------------
+      # 3) GitHub Pages configuration
+      # ---------------------------------------------------------
+      - name: ⚙️ Configure GitHub Pages
+        uses: actions/configure-pages@v6
+
+      # ---------------------------------------------------------
+      # 4) Install dependencies
+      # ---------------------------------------------------------
+      - name: 📦 Install dependencies
+        run: |
+          npm install --no-audit --no-fund
+
+      # ---------------------------------------------------------
+      # 5) Validate required environment variables
+      # ---------------------------------------------------------
+      - name: 🔐 Validate production environment
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          set -e
+
+          if [ -z "$VITE_SUPABASE_URL" ]; then
+            echo "::error::VITE_SUPABASE_URL is missing."
+            exit 1
+          fi
+
+          if [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "::error::VITE_SUPABASE_PUBLISHABLE_KEY is missing."
+            exit 1
+          fi
+
+          echo "✅ Required production environment variables are present."
+
+      # ---------------------------------------------------------
+      # 6) TypeScript check
+      # ---------------------------------------------------------
+      - name: 🧠 TypeScript check
+        run: |
+          npm run typecheck
+
+      # ---------------------------------------------------------
+      # 7) Lint
+      # ---------------------------------------------------------
+      - name: 🧹 Lint
+        run: |
+          npm run lint
+
+      # ---------------------------------------------------------
+      # 8) Tests
+      # ---------------------------------------------------------
+      - name: 🧪 Run tests
+        run: |
+          npm run test
+
+      # ---------------------------------------------------------
+      # 9) Build production bundle
+      # ---------------------------------------------------------
+      - name: 🏗️ Build production
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_APP_ENV: ${{ env.VITE_APP_ENV }}
+          VITE_PUBLIC_APP_URL: ${{ env.VITE_PUBLIC_APP_URL }}
+          VITE_PAYMENT_MODE: ${{ env.VITE_PAYMENT_MODE }}
+        run: |
+          npm run build
+
+      # ---------------------------------------------------------
+      # 10) GitHub Pages SPA fallback
+      # ---------------------------------------------------------
+      - name: 🔄 Create SPA fallback
+        run: |
+          if [ -f "dist/index.html" ]; then
+            cp dist/index.html dist/404.html
+            echo "✅ dist/404.html created."
+          else
+            echo "::error::dist/index.html does not exist."
+            exit 1
+          fi
+
+      # ---------------------------------------------------------
+      # 11) Verify build output
+      # ---------------------------------------------------------
+      - name: 🔎 Verify build output
+        run: |
+          set -e
+
+          test -f dist/index.html
+          test -f dist/404.html
+
+          echo "✅ index.html exists"
+          echo "✅ 404.html exists"
+
+          echo "📦 Build size:"
+          du -sh dist
+
+          echo "📁 Build files:"
+          find dist -maxdepth 2 -type f | sort | head -200
+
+      # ---------------------------------------------------------
+      # 12) Upload GitHub Pages artifact
+      # ---------------------------------------------------------
+      - name: 📤 Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./dist
+
+      # ---------------------------------------------------------
+      # 13) Deploy
+      # ---------------------------------------------------------
+      - name: 🚀 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+      # ---------------------------------------------------------
+      # 14) Deployment result
+      # ---------------------------------------------------------
+      - name: ✅ Deployment summary
+        run: |
+          echo "=========================================="
+          echo " Mobilex 2.0 deployment completed"
+          echo "=========================================="
+          echo "Environment: production"
+          echo "Site: https://mywc.github.io/Mobilex/"
+          echo "=========================================="

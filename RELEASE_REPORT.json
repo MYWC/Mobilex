@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-10-02T23:23:01.015Z",
+  "version": "2.0.0",
+  "commit": "not available",
+  "sourceFiles": 197,
+  "testFiles": 19,
+  "migrations": 7,
+  "edgeFunctions": 4,
+  "status": "final-release-ready",
+  "phase": "10-final",
+  "payment": "generic-server-gateway-adapter-with-signed-webhook-boundary"
+}

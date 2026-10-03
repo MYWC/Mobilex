@@ -1,0 +1,7 @@
+import { X } from 'lucide-react';
+import { useCatalogStore } from '@/features/catalog/catalog.store';
+import { Button } from '@/components/ui/Button';
+export function ActiveFilters(){
+ const f=useCatalogStore(s=>s.filters); const clear=useCatalogStore(s=>s.clearFilters); const chips=[...(f.brandIds.map(id=>({key:`b-${id}`,text:`برند: ${id}`,remove:()=>useCatalogStore.getState().toggleBrand(id)}))),...(f.categoryIds.map(id=>({key:`c-${id}`,text:`دسته: ${id}`,remove:()=>useCatalogStore.getState().toggleCategory(id)}))),...(f.ratings.map(r=>({key:`r-${r}`,text:`${r}+ ستاره`,remove:()=>useCatalogStore.getState().toggleRating(r)})))]; if(f.onlyInStock)chips.push({key:'stock',text:'فقط موجود',remove:()=>useCatalogStore.getState().setBooleanFilter('onlyInStock',false)} as any); if(f.onlyDiscounted)chips.push({key:'sale',text:'فقط تخفیف',remove:()=>useCatalogStore.getState().setBooleanFilter('onlyDiscounted',false)} as any); if(f.onlyNew)chips.push({key:'new',text:'فقط جدید',remove:()=>useCatalogStore.getState().setBooleanFilter('onlyNew',false)} as any); if(f.query)chips.unshift({key:'q',text:`جستجو: ${f.query}`,remove:()=>useCatalogStore.getState().setQuery('')} as any);
+ if(!chips.length)return null; return <div className="mx-active-filters"><span>فیلترهای فعال:</span>{chips.map(c=><button key={c.key} type="button" onClick={c.remove}>{c.text}<X size={12}/></button>)}<Button size="xs" variant="ghost" onClick={clear}>پاک کردن همه</Button></div>;
+}
