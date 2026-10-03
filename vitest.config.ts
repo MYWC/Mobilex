@@ -1,11 +1,9 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
 import path from 'node:path';
 
 export default defineConfig({
-  base: '/Mobilex/',
-  plugins: [react(), tailwindcss()],
+  plugins: [react()],
   resolve: {
     alias: { '@': path.resolve(process.cwd(), './src') },
   },
@@ -14,5 +12,6 @@ export default defineConfig({
     globals: true,
     clearMocks: true,
     restoreMocks: true,
+    passWithNoTests: false,
   },
 });

@@ -7,6 +7,7 @@ import { getShippingOption } from './shipping.service';
 import { createPaymentSession } from './payment.provider';
 import { COMMERCE } from './commerce.constants';
 import { addressSchema } from './commerce.schema';
+import { resolveAppUrl } from '@/lib/ux/paths';
 
 export async function buildCheckoutSnapshot(input: {
   items: CheckoutSnapshot['items'];
@@ -92,7 +93,7 @@ export async function createOrder(snapshot: CheckoutSnapshot): Promise<CreateOrd
         orderId: base.orderId,
         orderNumber: base.orderNumber,
         amount: base.totalAmount,
-        callbackUrl: `${window.location.origin}/order-confirmation?order=${encodeURIComponent(base.orderId)}`,
+        callbackUrl: `${resolveAppUrl('/order-confirmation')}?order=${encodeURIComponent(base.orderId)}`,
       });
       return { ...base, paymentId: session.paymentId, redirectUrl: session.redirectUrl };
     }

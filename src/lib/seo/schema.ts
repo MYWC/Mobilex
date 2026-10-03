@@ -1,11 +1,12 @@
 import { setJsonLd } from '@/lib/seo/seo';
+import { resolveAppUrl } from '@/lib/ux/paths';
 
 export function setOrganizationSchema(): void {
   setJsonLd('mobilex-schema-organization', {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Mobilex',
-    url: window.location.origin,
+    url: resolveAppUrl('/'),
   });
 }
 
@@ -14,16 +15,16 @@ export function setWebsiteSchema(): void {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'Mobilex',
-    url: window.location.origin,
+    url: resolveAppUrl('/'),
     potentialAction: {
       '@type': 'SearchAction',
-      target: `${window.location.origin}/products?query={search_term_string}`,
+      target: `${resolveAppUrl('/products')}?query={search_term_string}`,
       'query-input': 'required name=search_term_string',
     },
   });
 }
 
-export function setBreadcrumbSchema(items: Array<{ name:string; path:string }>): void {
+export function setBreadcrumbSchema(items: Array<{ name: string; path: string }>): void {
   setJsonLd('mobilex-schema-breadcrumb', {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -31,7 +32,7 @@ export function setBreadcrumbSchema(items: Array<{ name:string; path:string }>):
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: new URL(item.path, window.location.origin).href,
+      item: resolveAppUrl(item.path),
     })),
   });
 }

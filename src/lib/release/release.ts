@@ -58,7 +58,6 @@ export function getReleaseSnapshot(): ReleaseSnapshot {
     {
       id: 'payment-boundary',
       label: 'Payment boundary',
-      ok: true,
       ok: !appEnv.isProduction || appEnv.paymentMode !== 'live' || appEnv.isSupabaseConfigured,
       detail: appEnv.paymentMode === 'live' ? 'Live payment mode is declared; verify server-side gateway, webhook and staging transactions before launch.' : 'Payment secrets and webhook verification remain server-side; configure the gateway adapter before accepting live payments.',
       severity: 'warning',

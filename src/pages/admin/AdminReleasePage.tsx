@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { getReleaseSnapshot } from '@/lib/release/release';
 import { APP } from '@/app/config/constants';
+import { appPath } from '@/lib/ux/paths';
 
 export function AdminReleasePage() {
   const release = getReleaseSnapshot();
@@ -51,8 +52,8 @@ export function AdminReleasePage() {
             <li>بعد از تأیید staging، build نهایی را روی دامنه اصلی deploy کن.</li>
           </ol>
           <div className="flex gap-2 mt-4 flex-wrap">
-            <Button variant="secondary" onClick={()=>window.location.href='/status'} icon={<ExternalLink size={14}/>}>وضعیت سیستم</Button>
-            <Button variant="secondary" onClick={()=>window.location.href='/'}>مشاهده فروشگاه</Button>
+            <Button variant="secondary" onClick={()=>window.location.href=appPath('/status')} icon={<ExternalLink size={14}/>}>وضعیت سیستم</Button>
+            <Button variant="secondary" onClick={()=>window.location.href=appPath('/')}>مشاهده فروشگاه</Button>
           </div>
         </Card>
       </div>

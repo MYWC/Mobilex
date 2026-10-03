@@ -17,5 +17,5 @@ function RuntimeBanner(){
 }
 export function App(){
   useEffect(()=>{const onKey=(e:KeyboardEvent)=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();document.querySelector<HTMLInputElement>('.mx-header-search input')?.focus()}};window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey)},[]);
-  return <BrowserRouter><ErrorBoundary><PlatformLayer/><AppChrome><RuntimeBanner/><AppRouter/></AppChrome></ErrorBoundary></BrowserRouter>
+  return <BrowserRouter basename={import.meta.env.BASE_URL}><ErrorBoundary><PlatformLayer/><AppChrome><RuntimeBanner/><AppRouter/></AppChrome></ErrorBoundary></BrowserRouter>
 }
