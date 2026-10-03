@@ -139,11 +139,7 @@ export function ProductsPage() {
           />
 
           {f.query && (
-            <button
-              type="button"
-              onClick={() => setQuery('')}
-              aria-label="Clear"
-            >
+            <button type="button" onClick={() => setQuery('')} aria-label="Clear">
               <X size={14} />
             </button>
           )}
@@ -161,11 +157,7 @@ export function ProductsPage() {
               <div className="mx-error-inline">
                 <strong>دریافت محصولات با مشکل مواجه شد.</strong>
 
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => void load()}
-                >
+                <Button size="sm" variant="outline" onClick={() => void load()}>
                   تلاش دوباره
                 </Button>
               </div>
@@ -189,10 +181,7 @@ export function ProductsPage() {
                 description="فیلترها یا عبارت جستجو را تغییر دهید."
                 icon={<SlidersHorizontal />}
                 actions={
-                  <Button
-                    variant="outline"
-                    onClick={() => useCatalogStore.getState().clearFilters()}
-                  >
+                  <Button variant="outline" onClick={() => useCatalogStore.getState().clearFilters()}>
                     پاک کردن فیلترها
                   </Button>
                 }

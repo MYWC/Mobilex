@@ -18,13 +18,7 @@ function getInitials(brand: BrandSummary) {
   return value.slice(0, 2).toUpperCase();
 }
 
-export function BrandRail({
-  brands,
-  limit = 24,
-}: {
-  brands: BrandSummary[];
-  limit?: number;
-}) {
+export function BrandRail({ brands, limit = 24 }: { brands: BrandSummary[]; limit?: number }) {
   const locale = useAppStore((s) => s.locale);
   const fa = locale === 'fa';
   const [query, setQuery] = useState('');
@@ -63,9 +57,7 @@ export function BrandRail({
 
       <div className="mx-brand-rail">
         {filteredBrands.map((brand) => {
-          const name = fa
-            ? brand.nameFa || brand.nameEn || ''
-            : brand.nameEn || brand.nameFa || '';
+          const name = fa ? brand.nameFa || brand.nameEn || '' : brand.nameEn || brand.nameFa || '';
 
           const initials = getInitials(brand);
 
@@ -99,9 +91,7 @@ export function BrandRail({
       </div>
 
       {!filteredBrands.length && (
-        <div className="mx-brand-empty">
-          {fa ? 'برندی پیدا نشد.' : 'No brands found.'}
-        </div>
+        <div className="mx-brand-empty">{fa ? 'برندی پیدا نشد.' : 'No brands found.'}</div>
       )}
     </div>
   );

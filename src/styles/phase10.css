@@ -302,11 +302,7 @@ a,
   border-radius: 50%;
   top: -36px;
   inset-inline-end: -32px;
-  background: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--mx-violet) 15%, transparent),
-    transparent 70%
-  );
+  background: radial-gradient(circle, color-mix(in srgb, var(--mx-violet) 15%, transparent), transparent 70%);
   pointer-events: none;
 }
 
@@ -329,12 +325,11 @@ a,
   overflow: hidden;
   border-radius: 14px;
   color: var(--mx-primary);
-  background:
-    linear-gradient(
-      145deg,
-      color-mix(in srgb, var(--mx-primary) 13%, var(--mx-surface-solid)),
-      color-mix(in srgb, var(--mx-violet) 10%, var(--mx-surface-solid))
-    );
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--mx-primary) 13%, var(--mx-surface-solid)),
+    color-mix(in srgb, var(--mx-violet) 10%, var(--mx-surface-solid))
+  );
   border: 1px solid color-mix(in srgb, var(--mx-primary) 12%, var(--mx-border));
 }
 

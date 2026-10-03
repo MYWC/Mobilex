@@ -123,10 +123,7 @@ export function CommandPalette() {
       },
     ];
 
-    if (
-      authenticated &&
-      ['admin', 'product_manager', 'warehouse', 'support'].includes(role ?? '')
-    ) {
+    if (authenticated && ['admin', 'product_manager', 'warehouse', 'support'].includes(role ?? '')) {
       list.push({
         id: 'admin',
         label: locale === 'fa' ? 'پنل مدیریت' : 'Admin',
@@ -151,9 +148,7 @@ export function CommandPalette() {
     const normalizedQuery = query.trim().toLocaleLowerCase();
 
     return actions.filter((action) =>
-      `${action.label} ${action.hint}`
-        .toLocaleLowerCase()
-        .includes(normalizedQuery),
+      `${action.label} ${action.hint}`.toLocaleLowerCase().includes(normalizedQuery),
     );
   }, [actions, query]);
 
@@ -162,17 +157,13 @@ export function CommandPalette() {
     setActiveIndex(0);
   };
 
-  const handleSearchKeyDown = (
-    event: ReactKeyboardEvent<HTMLInputElement>,
-  ) => {
+  const handleSearchKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
     if (!filtered.length) return;
 
     if (event.key === 'ArrowDown') {
       event.preventDefault();
 
-      setActiveIndex((index) =>
-        Math.min(index + 1, filtered.length - 1),
-      );
+      setActiveIndex((index) => Math.min(index + 1, filtered.length - 1));
     }
 
     if (event.key === 'ArrowUp') {
@@ -189,9 +180,7 @@ export function CommandPalette() {
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      const isShortcut =
-        (event.ctrlKey || event.metaKey) &&
-        event.key.toLowerCase() === 'k';
+      const isShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k';
 
       if (isShortcut) {
         event.preventDefault();
@@ -215,9 +204,7 @@ export function CommandPalette() {
   useEffect(() => {
     if (!open) return;
 
-    const input = document.getElementById(
-      'mx-command-search',
-    ) as HTMLInputElement | null;
+    const input = document.getElementById('mx-command-search') as HTMLInputElement | null;
 
     input?.focus();
   }, [open]);
@@ -249,9 +236,7 @@ export function CommandPalette() {
             </span>
 
             <div>
-              <strong id="mx-command-title">
-                Mobilex Command Center
-              </strong>
+              <strong id="mx-command-title">Mobilex Command Center</strong>
 
               <small>⌘K / Ctrl K</small>
             </div>
@@ -277,25 +262,14 @@ export function CommandPalette() {
             value={query}
             onChange={(event) => handleQueryChange(event.target.value)}
             onKeyDown={handleSearchKeyDown}
-            placeholder={
-              locale === 'fa'
-                ? 'جستجوی فرمان...'
-                : 'Search command...'
-            }
+            placeholder={locale === 'fa' ? 'جستجوی فرمان...' : 'Search command...'}
             autoComplete="off"
             aria-controls="mx-command-list"
-            aria-activedescendant={
-              activeAction ? `mx-command-option-${activeAction.id}` : undefined
-            }
+            aria-activedescendant={activeAction ? `mx-command-option-${activeAction.id}` : undefined}
           />
         </label>
 
-        <div
-          className="mx-command-list"
-          id="mx-command-list"
-          role="listbox"
-          aria-label="فرمان‌های Mobilex"
-        >
+        <div className="mx-command-list" id="mx-command-list" role="listbox" aria-label="فرمان‌های Mobilex">
           {filtered.length ? (
             filtered.map((action, index) => {
               const isActive = index === activeIndex;
@@ -306,21 +280,14 @@ export function CommandPalette() {
                   id={`mx-command-option-${action.id}`}
                   type="button"
                   role="option"
-                  className={`mx-command-item ${
-                    isActive ? 'is-active' : ''
-                  } ${
-                    theme === 'dark' &&
-                    action.id.startsWith('theme-')
-                      ? 'is-theme-active'
-                      : ''
+                  className={`mx-command-item ${isActive ? 'is-active' : ''} ${
+                    theme === 'dark' && action.id.startsWith('theme-') ? 'is-theme-active' : ''
                   }`}
                   aria-selected={isActive}
                   onMouseEnter={() => setActiveIndex(index)}
                   onClick={action.run}
                 >
-                  <span className="mx-command-item-icon">
-                    {action.icon}
-                  </span>
+                  <span className="mx-command-item-icon">{action.icon}</span>
 
                   <span className="mx-command-item-copy">
                     <strong>{action.label}</strong>
@@ -333,9 +300,7 @@ export function CommandPalette() {
             })
           ) : (
             <div className="mx-command-empty">
-              {locale === 'fa'
-                ? 'موردی پیدا نشد.'
-                : 'No commands found.'}
+              {locale === 'fa' ? 'موردی پیدا نشد.' : 'No commands found.'}
             </div>
           )}
         </div>

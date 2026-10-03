@@ -67,10 +67,7 @@ export function HomePage() {
 
   const demo = getDemoProducts();
 
-  const sale = useMemo(
-    () => demo.filter((p) => p.salePrice && p.salePrice < p.price).slice(0, 4),
-    [demo],
-  );
+  const sale = useMemo(() => demo.filter((p) => p.salePrice && p.salePrice < p.price).slice(0, 4), [demo]);
 
   const newItems = useMemo(() => demo.filter((p) => p.isNew).slice(0, 4), [demo]);
 
@@ -182,9 +179,7 @@ export function HomePage() {
           <SectionHeading
             eyebrow="DISCOVER"
             title={fa ? 'دسته‌بندی‌ها' : 'Browse categories'}
-            description={
-              fa ? 'سریع‌تر به چیزی که دنبالش هستی برس.' : 'Jump straight to what you want.'
-            }
+            description={fa ? 'سریع‌تر به چیزی که دنبالش هستی برس.' : 'Jump straight to what you want.'}
           />
 
           <CategoryRail categories={categories} />
@@ -252,11 +247,7 @@ export function HomePage() {
                 <Flame size={13} /> FLASH DEAL
               </Badge>
 
-              <h2>
-                {fa
-                  ? 'برای علاقه‌مندی‌هایت، وقت تخفیف است.'
-                  : 'Your wishlist just got more exciting.'}
-              </h2>
+              <h2>{fa ? 'برای علاقه‌مندی‌هایت، وقت تخفیف است.' : 'Your wishlist just got more exciting.'}</h2>
 
               <p>
                 {fa
