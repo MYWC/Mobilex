@@ -23,7 +23,7 @@ import { getFeaturedProducts, getDemoProducts } from '@/services/catalog/catalog
 import { useAppStore } from '@/stores/useAppStore';
 import { SmartDiscovery } from '@/components/growth/SmartDiscovery';
 import { getMessage } from '@/lib/i18n/i18n';
-import type { BrandSummary, CatalogProduct, CategorySummary } from '@/types/catalog';
+import type { CatalogProduct, CategorySummary, BrandSummary } from '@/types/catalog';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { usePageSeo } from '@/hooks/usePageSeo';
 
@@ -33,8 +33,8 @@ export function HomePage() {
   const t = (key: any) => getMessage(locale, key);
 
   const [featured, setFeatured] = useState<CatalogProduct[]>([]);
-  const [brands, setBrands] = useState<BrandSummary[]>([]);
   const [categories, setCategories] = useState<CategorySummary[]>([]);
+  const [brands, setBrands] = useState<BrandSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -44,8 +44,8 @@ export function HomePage() {
       .then(([x, facets]) => {
         if (active) {
           setFeatured(x);
-          setBrands(facets.brands);
           setCategories(facets.categories);
+          setBrands(facets.brands);
         }
       })
       .finally(() => {
@@ -72,10 +72,7 @@ export function HomePage() {
     [demo],
   );
 
-  const newItems = useMemo(
-    () => demo.filter((p) => p.isNew).slice(0, 4),
-    [demo],
-  );
+  const newItems = useMemo(() => demo.filter((p) => p.isNew).slice(0, 4), [demo]);
 
   return (
     <div className="mx-storefront">
@@ -116,9 +113,7 @@ export function HomePage() {
                 <Button
                   size="lg"
                   icon={<Sparkles size={17} />}
-                  iconAfter={
-                    fa ? <ArrowLeft size={16} /> : <ArrowUpLeft size={16} />
-                  }
+                  iconAfter={fa ? <ArrowLeft size={16} /> : <ArrowUpLeft size={16} />}
                 >
                   {fa ? 'اکتشاف محصولات' : 'Explore products'}
                 </Button>
@@ -135,11 +130,9 @@ export function HomePage() {
               <span>
                 <ShieldCheck size={15} /> {fa ? 'خرید امن' : 'Secure purchase'}
               </span>
-
               <span>
                 <Truck size={15} /> {fa ? 'ارسال سریع' : 'Fast shipping'}
               </span>
-
               <span>
                 <Headphones size={15} /> {fa ? 'پشتیبانی' : 'Support'}
               </span>
@@ -177,9 +170,7 @@ export function HomePage() {
         </div>
 
         <div className="mx-hero-scroll">
-          <span>
-            {fa ? 'برای کشف بیشتر اسکرول کنید' : 'Scroll to explore'}
-          </span>
+          <span>{fa ? 'برای کشف بیشتر اسکرول کنید' : 'Scroll to explore'}</span>
           <ChevronDown size={16} />
         </div>
       </section>
@@ -192,9 +183,7 @@ export function HomePage() {
             eyebrow="DISCOVER"
             title={fa ? 'دسته‌بندی‌ها' : 'Browse categories'}
             description={
-              fa
-                ? 'سریع‌تر به چیزی که دنبالش هستی برس.'
-                : 'Jump straight to what you want.'
+              fa ? 'سریع‌تر به چیزی که دنبالش هستی برس.' : 'Jump straight to what you want.'
             }
           />
 
@@ -230,11 +219,7 @@ export function HomePage() {
             }
             actions={
               <Link to="/products">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  iconAfter={<ArrowUpLeft size={16} />}
-                >
+                <Button variant="outline" size="sm" iconAfter={<ArrowUpLeft size={16} />}>
                   {fa ? 'مشاهده همه' : 'View all'}
                 </Button>
               </Link>
@@ -332,26 +317,10 @@ export function HomePage() {
 
           <div className="mx-benefit-grid">
             {[
-              [
-                ShieldCheck,
-                'خرید مطمئن',
-                'لایه‌های امنیتی و اعتبارسنجی برای عملیات حساس.',
-              ],
-              [
-                Truck,
-                'ارسال سریع',
-                'تجربه‌ی شفاف ارسال، رهگیری و وضعیت سفارش.',
-              ],
-              [
-                Headphones,
-                'پشتیبانی واقعی',
-                'مسیر روشن برای سؤال، پیگیری و حل مسئله.',
-              ],
-              [
-                Sparkles,
-                'تجربه هوشمند',
-                'جستجو، پیشنهاد و مقایسه با کمترین اصطکاک.',
-              ],
+              [ShieldCheck, 'خرید مطمئن', 'لایه‌های امنیتی و اعتبارسنجی برای عملیات حساس.'],
+              [Truck, 'ارسال سریع', 'تجربه‌ی شفاف ارسال، رهگیری و وضعیت سفارش.'],
+              [Headphones, 'پشتیبانی واقعی', 'مسیر روشن برای سؤال، پیگیری و حل مسئله.'],
+              [Sparkles, 'تجربه هوشمند', 'جستجو، پیشنهاد و مقایسه با کمترین اصطکاک.'],
             ].map(([Icon, title, text], i) => {
               const C = Icon as any;
 
