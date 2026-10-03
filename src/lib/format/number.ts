@@ -14,3 +14,10 @@ export function formatToman(value: number, locale: Locale): string {
 export function formatPercent(value: number, locale: Locale): string {
   return new Intl.NumberFormat(localeCode(locale), { style: 'percent', maximumFractionDigits: 0 }).format(value);
 }
+export function formatCurrency(value: number, locale: Locale): string {
+  return formatToman(value, locale);
+}
+
+export function formatPrice(value: number, locale: Locale = 'fa'): string {
+  return formatToman(value, locale);
+}

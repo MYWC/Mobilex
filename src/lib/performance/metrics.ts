@@ -33,9 +33,21 @@ export function startPerformanceMonitoring(): () => void {
   });
 
   if (!supported) return () => undefined;
-  const observe = (type: string, handler: (list: PerformanceObserverEntryList) => void, options?: PerformanceObserverInit) => {
-    try { const observer = new PerformanceObserver(handler); observer.observe({ type, buffered: true, ...(options ?? {}) }); observers.push(observer); } catch { /* unsupported */ }
-  };
+  const observe = (
+  type: string,
+  handler: (list: PerformanceObserverEntryList) => void,
+  options?: PerformanceObserverInit & { durationThreshold?: number }
+) => {
+  try {
+    const observer = new PerformanceObserver(handler);
+    observer.observe(
+      { type, buffered: true, ...(options ?? {}) } as PerformanceObserverInit
+    );
+    observers.push(observer);
+  } catch {
+    /* unsupported */
+  }
+};
   observe('paint', list => { for (const entry of list.getEntries()) if (entry.name === 'first-contentful-paint') report('fcp', entry.startTime); });
   observe('largest-contentful-paint', list => { const last = list.getEntries().at(-1); if (last) report('lcp', last.startTime); });
   observe('layout-shift', list => {

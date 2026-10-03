@@ -20,7 +20,7 @@ export function on<T = unknown>(event: string, handler: Handler<T>): () => void 
 }
 
 export function once<T = unknown>(event: string, handler: Handler<T>): () => void {
-  let unsubscribe = () => undefined;
+  let unsubscribe: () => void = () => undefined;
   unsubscribe = on<T>(event, (payload) => {
     unsubscribe();
     handler(payload);

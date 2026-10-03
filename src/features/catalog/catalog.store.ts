@@ -32,7 +32,8 @@ interface CatalogState {
   setView:(view:'grid'|'list')=>void;
   loadFacets:()=>Promise<void>;
 }
-const hasId = (arr:string[],id:string)=>arr.includes(id) ? arr.filter(x=>x!==id) : [...arr,id];
+const hasId = <T,>(arr: T[], id: T): T[] =>
+  arr.includes(id) ? arr.filter(x => x !== id) : [...arr, id];
 export const useCatalogStore = create<CatalogState>((set,get)=>({
   filters:{...defaults},view:'grid',products:[],total:0,availableMinPrice:0,availableMaxPrice:0,brands:[],categories:[],loading:false,facetsLoading:false,error:null,hydrated:false,
   setQuery:(query)=>set({filters:{...get().filters,query,page:1}}),

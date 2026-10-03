@@ -12,7 +12,7 @@ export function hardenExternalAnchors(root: ParentNode = document): void {
 export function disableUnsafeWindowOpen(): void {
   if (typeof window === 'undefined') return;
   const marker = '__mobilexOriginalWindowOpen';
-  const state = window as Window & { [key:string]: unknown };
+  const state = window as unknown as Window & { [key: string]: unknown };
   if (state[marker]) return;
   const original = window.open;
   state[marker] = original;

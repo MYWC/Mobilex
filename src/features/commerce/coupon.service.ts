@@ -5,6 +5,7 @@ import { COMMERCE } from './commerce.constants';
 import type { CouponState } from './commerce.types';
 
 export interface CouponResult extends CouponState {
+  valid: boolean;
   minOrderAmount?: number;
   maxDiscountAmount?: number;
 }

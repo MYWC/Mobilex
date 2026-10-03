@@ -48,10 +48,29 @@ export async function deleteRemoteNotification(userId: string, notificationId: s
   if (error) throw normalizeError(error);
 }
 
-export async function subscribeNotifications(userId: string, onChange: () => void): Promise<() => void> {
-  if (!supabase) return () => undefined;
-  const channel = supabase.channel(`mobilex-notifications:${userId}`)
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` }, onChange)
+export async function subscribeNotifications(
+  userId: string,
+  onChange: () => void
+): Promise<() => void> {
+  const client = supabase;
+
+  if (!client) return () => undefined;
+
+  const channel = client
+    .channel(`mobilex-notifications:${userId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'notifications',
+        filter: `user_id=eq.${userId}`,
+      },
+      onChange
+    )
     .subscribe();
-  return () => { void supabase.removeChannel(channel); };
+
+  return () => {
+    void client.removeChannel(channel);
+  };
 }

@@ -7,7 +7,7 @@ import { routes } from '@/app/routes/routeConfig';
 
 export function AdminTopbar({onMenu}:{onMenu:()=>void}){
   const [query,setQuery]=useState('');
-  const theme=useAppStore(s=>s.theme); const setTheme=useAppStore(s=>s.setTheme); const unread=useNotificationStore(s=>s.unreadCount);
+  const theme=useAppStore(s=>s.theme); const setTheme=useAppStore(s=>s.setTheme); const unread=useNotificationStore(s=>s.items.filter(item=>!item.read).length);
   return <header className="mx-admin-topbar">
     <button className="mx-admin-menu" aria-label="باز کردن منوی مدیریت" onClick={onMenu}><Menu size={20}/></button>
     <div className="mx-admin-search"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="جستجو در پنل مدیریت..."/></div>

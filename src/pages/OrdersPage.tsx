@@ -11,7 +11,14 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { formatCurrency, formatNumber } from '@/lib/format/number';
 
 const statuses=[['','همه','All'],['pending_payment','در انتظار پرداخت','Pending payment'],['processing','در حال پردازش','Processing'],['paid','پرداخت‌شده','Paid'],['shipped','ارسال‌شده','Shipped'],['delivered','تحویل‌شده','Delivered'],['cancelled','لغوشده','Cancelled'],['returned','مرجوعی','Returned']] as const;
-const statusTone=(s:string)=>s==='delivered'?'success':s==='cancelled'||s==='returned'?'danger':s==='pending_payment'?'warning':'primary';
+const statusTone = (s: string) =>
+  s === 'delivered'
+    ? 'success'
+    : s === 'cancelled' || s === 'returned'
+      ? 'danger'
+      : s === 'pending_payment'
+        ? 'warning'
+        : 'info';
 const statusLabel=(s:string,fa:boolean)=>({pending_payment:fa?'در انتظار پرداخت':'Pending payment',processing:fa?'در حال پردازش':'Processing',paid:fa?'پرداخت‌شده':'Paid',shipped:fa?'ارسال‌شده':'Shipped',delivered:fa?'تحویل‌شده':'Delivered',cancelled:fa?'لغو شده':'Cancelled',returned:fa?'مرجوعی':'Returned'} as Record<string,string>)[s]??s;
 export function OrdersPage(){const fa=useAppStore(s=>s.locale)==='fa';const[params,setParams]=useSearchParams();const[items,setItems]=useState<OrderListItem[]>([]);const[status,setStatus]=useState(params.get('status')??'');const[search,setSearch]=useState('');const[loading,setLoading]=useState(true);const[error,setError]=useState(false);const[page,setPage]=useState(1);const[total,setTotal]=useState(0);const load=async()=>{setLoading(true);try{setError(false);const r=await listMyOrders({page,pageSize:10,status:status||undefined,search:search||undefined});setItems(r.items);setTotal(r.total)}catch{setError(true)}finally{setLoading(false)}};useEffect(()=>{void load()},[page,status]);useEffect(()=>{const id=setTimeout(()=>setPage(1),350);return()=>clearTimeout(id)},[search]);const pages=Math.max(1,Math.ceil(total/10));const tabs=useMemo(()=>statuses,[ ]);
  const setFilter=(v:string)=>{setStatus(v);setParams(v?{status:v}:{})};
