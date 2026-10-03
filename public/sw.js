@@ -1,3 +1,4 @@
+/* global self, caches, URL */
 const VERSION = 'mobilex-v2.0.0-final-v2';
 const BASE_URL = new URL('./', self.registration.scope).pathname;
 const APP_SHELL = [
