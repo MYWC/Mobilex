@@ -6,8 +6,8 @@ import { ProductGrid } from '@/components/product/ProductGrid';
 import { FilterSidebar } from '@/components/catalog/FilterSidebar';
 import { CatalogToolbar } from '@/components/catalog/CatalogToolbar';
 import { ActiveFilters } from '@/components/catalog/ActiveFilters';
-import { BrandRail } from '@/components/catalog/BrandRail';
 import { Pagination } from '@/components/catalog/Pagination';
+import { BrandRail } from '@/components/catalog/BrandRail';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -28,6 +28,7 @@ export function ProductsPage() {
   const total = useCatalogStore((s) => s.total);
   const loading = useCatalogStore((s) => s.loading);
   const error = useCatalogStore((s) => s.error);
+
   const brands = useCatalogStore((s) => s.brands);
   const categories = useCatalogStore((s) => s.categories);
 
@@ -40,11 +41,7 @@ export function ProductsPage() {
 
   usePageSeo(
     {
-      title: f.query
-        ? `جستجو — ${f.query}`
-        : fa
-          ? 'محصولات | Mobilex'
-          : 'Products | Mobilex',
+      title: f.query ? `جستجو — ${f.query}` : fa ? 'محصولات | Mobilex' : 'Products | Mobilex',
       description: fa
         ? 'فهرست محصولات، فیلترها و مرتب‌سازی فروشگاه Mobilex.'
         : 'Browse Mobilex products with filters and sorting.',
@@ -103,48 +100,13 @@ export function ProductsPage() {
 
         <SectionHeading
           eyebrow="CATALOG"
-          title={
-            f.query
-              ? `نتایج «${f.query}»`
-              : fa
-                ? 'همه محصولات'
-                : 'All products'
-          }
+          title={f.query ? `نتایج «${f.query}»` : fa ? 'همه محصولات' : 'All products'}
           description={
             fa
               ? `${total.toLocaleString('fa-IR')} محصول برای کشف، مقایسه و انتخاب.`
               : `${total} products to discover, compare and choose.`
           }
         />
-
-        <div className="mx-catalog-searchbar">
-          <Search size={16} />
-
-          <input
-            value={f.query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && f.query.trim()) {
-                addSearch(f.query);
-              }
-            }}
-            placeholder={
-              fa ? 'جستجوی سریع در محصولات…' : 'Search products…'
-            }
-          />
-
-          {f.query && (
-            <button
-              type="button"
-              onClick={() => setQuery('')}
-              aria-label={fa ? 'پاک کردن' : 'Clear'}
-            >
-              <X size={14} />
-            </button>
-          )}
-        </div>
-
-        <ActiveFilters />
 
         {brands.length > 0 && (
           <section className="mx-section mx-section-compact">
@@ -162,17 +124,38 @@ export function ProductsPage() {
           </section>
         )}
 
-        <div className="mx-catalog-layout">
-          <FilterSidebar
-            brands={brands}
-            categories={categories}
+        <div className="mx-catalog-searchbar">
+          <Search size={16} />
+
+          <input
+            value={f.query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && f.query.trim()) {
+                addSearch(f.query);
+              }
+            }}
+            placeholder={fa ? 'جستجوی سریع در محصولات…' : 'Search products…'}
           />
 
+          {f.query && (
+            <button
+              type="button"
+              onClick={() => setQuery('')}
+              aria-label="Clear"
+            >
+              <X size={14} />
+            </button>
+          )}
+        </div>
+
+        <ActiveFilters />
+
+        <div className="mx-catalog-layout">
+          <FilterSidebar brands={brands} categories={categories} />
+
           <main className="mx-catalog-main">
-            <CatalogToolbar
-              brands={brands}
-              categories={categories}
-            />
+            <CatalogToolbar brands={brands} categories={categories} />
 
             {error && (
               <div className="mx-error-inline">
@@ -202,21 +185,15 @@ export function ProductsPage() {
               <ProductGrid products={products} />
             ) : (
               <EmptyState
-                title={fa ? 'محصولی پیدا نشد' : 'No products found'}
-                description={
-                  fa
-                    ? 'فیلترها یا عبارت جستجو را تغییر دهید.'
-                    : 'Change the filters or search query.'
-                }
+                title="محصولی پیدا نشد"
+                description="فیلترها یا عبارت جستجو را تغییر دهید."
                 icon={<SlidersHorizontal />}
                 actions={
                   <Button
                     variant="outline"
-                    onClick={() =>
-                      useCatalogStore.getState().clearFilters()
-                    }
+                    onClick={() => useCatalogStore.getState().clearFilters()}
                   >
-                    {fa ? 'پاک کردن فیلترها' : 'Clear filters'}
+                    پاک کردن فیلترها
                   </Button>
                 }
               />
