@@ -9,5 +9,108 @@ import { listUsers, updateUserRole } from '@/services/admin/admin.service';
 import type { AdminUserRow } from '@/types/admin';
 import type { UserRole } from '@/types/core';
 
-const roles:UserRole[]=['admin','product_manager','warehouse','support','customer']; const labels:Record<UserRole,string>={admin:'مدیر کل',product_manager:'مدیر محصول',warehouse:'انبار',support:'پشتیبانی',customer:'مشتری'};
-export function AdminUsersPage(){const [rows,setRows]=useState<AdminUserRow[]>([]);const [error,setError]=useState('');const [search,setSearch]=useState('');const [role,setRole]=useState<UserRole|'all'>('all');const [busy,setBusy]=useState<string|null>(null);const load=async()=>{setError('');try{setRows(await listUsers({search,role}))}catch(e){setError(e instanceof Error?e.message:'خطا')}};useEffect(()=>{void load()},[role]);const change=async(id:string,r:UserRole)=>{setBusy(id);try{await updateUserRole(id,r);await load()}catch(e){console.error(e)}finally{setBusy(null)}};return <AdminShell title="مشتریان و کاربران"><AdminDataView title="مدیریت کاربران" subtitle="نقش‌ها، پروفایل و کنترل دسترسی" search={search} onSearch={setSearch} onRefresh={()=>void load()} actions={<Button size="sm" variant="secondary" icon={<UserRoundCog size={14}/>}>ابزار کاربران</Button>}>{error&&<div className="mx-admin-error">{error}</div>}<AdminFilters><select className="mx-admin-filter-select" value={role} onChange={e=>setRole(e.target.value as any)}><option value="all">همه نقش‌ها</option>{roles.map(r=><option value={r} key={r}>{labels[r]}</option>)}</select></AdminFilters><AdminTable headers={['کاربر','تلفن','نقش','عضویت','عملیات']}>{rows.map(u=><tr key={u.id}><td><strong>{u.fullName||u.email||u.id.slice(0,10)}</strong><small className="mx-cell-sub">{u.email||u.id}</small></td><td>{u.phone||'—'}</td><td><StatusPill tone={u.role==='admin'?'info':u.role==='customer'?'neutral':'success'}><ShieldCheck size={11}/>{labels[u.role]}</StatusPill></td><td>{new Intl.DateTimeFormat('fa-IR',{dateStyle:'medium'}).format(new Date(u.createdAt))}</td><td><select className="mx-role-select" value={u.role} disabled={busy===u.id} onChange={e=>void change(u.id,e.target.value as UserRole)}>{roles.map(r=><option value={r} key={r}>{labels[r]}</option>)}</select></td></tr>)}</AdminTable></AdminDataView></AdminShell>}
+const roles: UserRole[] = ['admin', 'product_manager', 'warehouse', 'support', 'customer'];
+const labels: Record<UserRole, string> = {
+  admin: 'مدیر کل',
+  product_manager: 'مدیر محصول',
+  warehouse: 'انبار',
+  support: 'پشتیبانی',
+  customer: 'مشتری',
+};
+export function AdminUsersPage() {
+  const [rows, setRows] = useState<AdminUserRow[]>([]);
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [role, setRole] = useState<UserRole | 'all'>('all');
+  const [busy, setBusy] = useState<string | null>(null);
+  const load = async () => {
+    setError('');
+    try {
+      setRows(await listUsers({ search, role }));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'خطا');
+    }
+  };
+  useEffect(() => {
+    void load();
+  }, [role]);
+  const change = async (id: string, r: UserRole) => {
+    setBusy(id);
+    try {
+      await updateUserRole(id, r);
+      await load();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setBusy(null);
+    }
+  };
+  return (
+    <AdminShell title="مشتریان و کاربران">
+      <AdminDataView
+        title="مدیریت کاربران"
+        subtitle="نقش‌ها، پروفایل و کنترل دسترسی"
+        search={search}
+        onSearch={setSearch}
+        onRefresh={() => void load()}
+        actions={
+          <Button size="sm" variant="secondary" icon={<UserRoundCog size={14} />}>
+            ابزار کاربران
+          </Button>
+        }
+      >
+        {error && <div className="mx-admin-error">{error}</div>}
+        <AdminFilters>
+          <select
+            className="mx-admin-filter-select"
+            value={role}
+            onChange={(e) => setRole(e.target.value as any)}
+          >
+            <option value="all">همه نقش‌ها</option>
+            {roles.map((r) => (
+              <option value={r} key={r}>
+                {labels[r]}
+              </option>
+            ))}
+          </select>
+        </AdminFilters>
+        <AdminTable headers={['کاربر', 'تلفن', 'نقش', 'عضویت', 'عملیات']}>
+          {rows.map((u) => (
+            <tr key={u.id}>
+              <td>
+                <strong>{u.fullName || u.email || u.id.slice(0, 10)}</strong>
+                <small className="mx-cell-sub">{u.email || u.id}</small>
+              </td>
+              <td>{u.phone || '—'}</td>
+              <td>
+                <StatusPill
+                  tone={u.role === 'admin' ? 'info' : u.role === 'customer' ? 'neutral' : 'success'}
+                >
+                  <ShieldCheck size={11} />
+                  {labels[u.role]}
+                </StatusPill>
+              </td>
+              <td>
+                {new Intl.DateTimeFormat('fa-IR', { dateStyle: 'medium' }).format(new Date(u.createdAt))}
+              </td>
+              <td>
+                <select
+                  className="mx-role-select"
+                  value={u.role}
+                  disabled={busy === u.id}
+                  onChange={(e) => void change(u.id, e.target.value as UserRole)}
+                >
+                  {roles.map((r) => (
+                    <option value={r} key={r}>
+                      {labels[r]}
+                    </option>
+                  ))}
+                </select>
+              </td>
+            </tr>
+          ))}
+        </AdminTable>
+      </AdminDataView>
+    </AdminShell>
+  );
+}

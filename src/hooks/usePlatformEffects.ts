@@ -16,15 +16,27 @@ export function usePlatformEffects(): void {
     disableUnsafeWindowOpen();
     setOrganizationSchema();
     setWebsiteSchema();
-    return () => { offObs(); offPerf(); };
+    return () => {
+      offObs();
+      offPerf();
+    };
   }, []);
 
   useEffect(() => {
-    const onBeforeInstall = (event: Event) => { event.preventDefault(); usePwaStore.getState().setInstallable(event as BeforeInstallPromptEvent); };
-    const onInstalled = () => { usePwaStore.getState().setInstalled(true); track({ type: 'custom', name: 'pwa_installed' }); };
+    const onBeforeInstall = (event: Event) => {
+      event.preventDefault();
+      usePwaStore.getState().setInstallable(event as BeforeInstallPromptEvent);
+    };
+    const onInstalled = () => {
+      usePwaStore.getState().setInstalled(true);
+      track({ type: 'custom', name: 'pwa_installed' });
+    };
     window.addEventListener('beforeinstallprompt', onBeforeInstall as EventListener);
     window.addEventListener('appinstalled', onInstalled);
-    return () => { window.removeEventListener('beforeinstallprompt', onBeforeInstall as EventListener); window.removeEventListener('appinstalled', onInstalled); };
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onBeforeInstall as EventListener);
+      window.removeEventListener('appinstalled', onInstalled);
+    };
   }, []);
 
   useEffect(() => {
@@ -41,4 +53,7 @@ export function usePlatformEffects(): void {
   }, []);
 }
 
-interface BeforeInstallPromptEvent extends Event { prompt: () => Promise<void>; userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>; }
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+}

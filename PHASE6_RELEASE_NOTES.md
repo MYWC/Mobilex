@@ -5,6 +5,7 @@ Version: 2.0.0-beta.6
 This release adds the Mobilex Admin Control Center and the database contracts required for operations, analytics, audit trails and content management.
 
 Admin routes:
+
 - /admin/dashboard
 - /admin/products
 - /admin/inventory

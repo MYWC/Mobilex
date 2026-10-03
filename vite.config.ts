@@ -22,7 +22,11 @@ export default defineConfig(() => ({
         codeSplitting: {
           groups: [
             { name: 'react-vendor', test: /node_modules[\\/]react(?:-dom)?(?:[\\/]|$)/, priority: 30 },
-            { name: 'router-vendor', test: /node_modules[\\/]react-router(?:-dom)?(?:[\\/]|$)/, priority: 25 },
+            {
+              name: 'router-vendor',
+              test: /node_modules[\\/]react-router(?:-dom)?(?:[\\/]|$)/,
+              priority: 25,
+            },
             { name: 'state-vendor', test: /node_modules[\\/]zustand(?:[\\/]|$)/, priority: 20 },
             { name: 'ui-vendor', test: /node_modules[\\/]lucide-react(?:[\\/]|$)/, priority: 15 },
             { name: 'data-vendor', test: /node_modules[\\/](?:@supabase|zod)(?:[\\/]|$)/, priority: 15 },

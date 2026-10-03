@@ -17,7 +17,9 @@ export const demoPaymentProvider: PaymentProvider = {
   },
 };
 
-export async function createPaymentSession(input: Parameters<PaymentProvider['createSession']>[0]): Promise<PaymentSession> {
+export async function createPaymentSession(
+  input: Parameters<PaymentProvider['createSession']>[0],
+): Promise<PaymentSession> {
   if (!supabase) return demoPaymentProvider.createSession(input);
 
   const { data, error } = await supabase.functions.invoke('create-payment-session', {

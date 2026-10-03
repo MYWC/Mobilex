@@ -8,7 +8,7 @@ const envSchema = z.object({
   VITE_APP_ENV: z.enum(['development', 'staging', 'production']).optional(),
   VITE_PUBLIC_APP_URL: z.string().url().optional(),
   VITE_OBSERVABILITY_ENDPOINT: z.string().url().optional(),
-  VITE_PAYMENT_MODE: z.enum(['disabled','sandbox','live']).optional(),
+  VITE_PAYMENT_MODE: z.enum(['disabled', 'sandbox', 'live']).optional(),
 });
 
 const parsed = envSchema.safeParse(import.meta.env);

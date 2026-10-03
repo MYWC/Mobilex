@@ -3,6 +3,7 @@
 A modular React + TypeScript + Vite storefront and Admin Control Center for Mobilex.
 
 ## Current architecture
+
 - React + TypeScript + Vite
 - Tailwind CSS 4
 - Supabase Auth / Postgres / Realtime / Edge Functions
@@ -11,6 +12,7 @@ A modular React + TypeScript + Vite storefront and Admin Control Center for Mobi
 - Modular Storefront + Account + Commerce + Admin domains
 
 ## Phase 6 highlights
+
 - Responsive independent Admin Control Center.
 - Permission-aware navigation and RBAC matrix.
 - Sales dashboard with SVG revenue chart, order funnel, recent orders and low-stock intelligence.
@@ -20,6 +22,7 @@ A modular React + TypeScript + Vite storefront and Admin Control Center for Mobi
 - Demo mode when Supabase environment variables are absent; real Supabase errors are not silently converted into demo data when live configuration exists.
 
 ## Run
+
 ```bash
 npm install
 cp .env.example .env.local
@@ -27,6 +30,7 @@ npm run dev
 ```
 
 ## Quality
+
 ```bash
 npm run validate
 npm run typecheck
@@ -40,6 +44,7 @@ Apply Supabase migrations in order, including:
 `supabase/migrations/0008_admin_control_center.sql`
 
 ## Admin routes
+
 - `/admin/dashboard`
 - `/admin/products`
 - `/admin/inventory`
@@ -50,4 +55,3 @@ Apply Supabase migrations in order, including:
 - `/admin/audit`
 - `/admin/roles`
 - `/admin/settings`
-

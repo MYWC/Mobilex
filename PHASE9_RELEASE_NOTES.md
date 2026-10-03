@@ -3,6 +3,7 @@
 Phase 9 adds the advanced commerce and growth layer while preserving Phase 1–8 contracts.
 
 ## Customer-facing
+
 - Compare up to 4 products with side-by-side specifications, pricing, rating, variants, and inventory.
 - Personalized recommendations driven by recent views, wishlist affinity, category/brand similarity, stock, popularity, and rating signals.
 - Product reviews with moderation-ready status, verified-purchase metadata, rating distribution, and helpful action.
@@ -13,7 +14,9 @@ Phase 9 adds the advanced commerce and growth layer while preserving Phase 1–8
 - Global compare tray and compare action on product cards and product details.
 
 ## Backend / Supabase
+
 Migration `0009_growth_engine.sql` adds:
+
 - growth_events
 - product_reviews
 - product_questions
@@ -26,6 +29,7 @@ Migration `0009_growth_engine.sql` adds:
 - RLS policies, review helpful RPC, support-ticket RPC, answer-count trigger.
 
 ## QA
+
 - JS script syntax checks: PASS
 - delimiter heuristic over TS/TSX: PASS
 - local `@/` import audit: PASS

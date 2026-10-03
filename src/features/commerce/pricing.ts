@@ -3,12 +3,18 @@ import type { CartPricing, ShippingOption } from './commerce.types';
 import { COMMERCE } from './commerce.constants';
 
 const amount = (value: unknown): number => (Number.isFinite(Number(value)) ? Number(value) : 0);
-const quantity = (line: CartLine): number => Math.max(1, Math.min(COMMERCE.maxQuantityPerLine, Math.floor(amount(line.quantity))));
+const quantity = (line: CartLine): number =>
+  Math.max(1, Math.min(COMMERCE.maxQuantityPerLine, Math.floor(amount(line.quantity))));
 
-export const calculateLineTotal = (line: CartLine): number => Math.max(0, amount(line.price)) * quantity(line);
-export const calculateSubtotal = (lines: CartLine[]): number => lines.reduce((sum, line) => sum + calculateLineTotal(line), 0);
+export const calculateLineTotal = (line: CartLine): number =>
+  Math.max(0, amount(line.price)) * quantity(line);
+export const calculateSubtotal = (lines: CartLine[]): number =>
+  lines.reduce((sum, line) => sum + calculateLineTotal(line), 0);
 export const calculateOriginalSubtotal = (lines: CartLine[]): number =>
-  lines.reduce((sum, line) => sum + Math.max(0, amount(line.compareAtPrice ?? line.price)) * quantity(line), 0);
+  lines.reduce(
+    (sum, line) => sum + Math.max(0, amount(line.compareAtPrice ?? line.price)) * quantity(line),
+    0,
+  );
 export const calculateItemDiscount = (lines: CartLine[]): number =>
   Math.max(0, calculateOriginalSubtotal(lines) - calculateSubtotal(lines));
 

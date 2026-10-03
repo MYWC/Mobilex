@@ -3,10 +3,114 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useAppStore } from '@/stores/useAppStore';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { requestPasswordReset, updatePassword, signOutAllSessions } from '@/features/account/account.security';
+import {
+  requestPasswordReset,
+  updatePassword,
+  signOutAllSessions,
+} from '@/features/account/account.security';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { logout } from '@/services/auth/auth.service';
 
-export function SecurityPage(){const fa=useAppStore(s=>s.locale)==='fa';const[password,setPassword]=useState('');const[saving,setSaving]=useState(false);const[action,setAction]=useState('');const auth=useAuthStore();const savePassword=async()=>{setSaving(true);try{await updatePassword(password);setPassword('')}finally{setSaving(false)}};const reset=async()=>{setAction('reset');try{await requestPasswordReset()}finally{setAction('')}};const allOut=async()=>{setAction('logout');try{await signOutAllSessions();await logout()}finally{setAction('')}};return <div className="mx-page"><div className="mx-shell mx-account-page"><div className="mx-breadcrumb"><Link to="/account">{fa?'حساب کاربری':'Account'}</Link><span>›</span><strong>{fa?'امنیت':'Security'}</strong></div><div className="mx-account-heading"><div><span className="mx-section-kicker">SECURITY CENTER</span><h1>{fa?'امنیت حساب':'Account security'}</h1><p>{fa?'مدیریت رمز عبور و نشست‌های ورود.':'Manage your password and active sessions.'}</p></div></div><div className="mx-security-grid"><Card><div className="mx-card-title"><KeyRound size={16}/><h2>{fa?'تغییر رمز عبور':'Change password'}</h2></div><Input label={fa?'رمز عبور جدید':'New password'} type="password" value={password} onChange={e=>setPassword(e.target.value)} dir="ltr"/><Button onClick={()=>void savePassword()} loading={saving} disabled={password.length<8} icon={<ShieldCheck size={15}/>}>{fa?'ذخیره رمز جدید':'Save new password'}</Button></Card><Card><div className="mx-card-title"><ShieldCheck size={16}/><h2>{fa?'بازیابی رمز':'Password recovery'}</h2></div><p className="mx-muted">{fa?'یک لینک امن بازیابی به ایمیل فعلی حساب ارسال می‌شود.':'A secure reset link will be sent to your account email.'}</p><Button variant="outline" onClick={()=>void reset()} loading={action==='reset'}>{fa?'ارسال لینک بازیابی':'Send reset link'}</Button></Card><Card><div className="mx-card-title"><LogOut size={16}/><h2>{fa?'خروج از همه نشست‌ها':'Sign out all sessions'}</h2></div><p className="mx-muted">{fa?'تمام نشست‌های فعال کاربر بسته خواهند شد.':'End all active sessions for this account.'}</p><Button variant="danger" onClick={()=>void allOut()} loading={action==='logout'}>{fa?'خروج از همه دستگاه‌ها':'Sign out everywhere'}</Button></Card></div><div className="mx-muted mx-security-note">{auth.appUser?.email || auth.user?.email || ''}</div></div></div>}
+export function SecurityPage() {
+  const fa = useAppStore((s) => s.locale) === 'fa';
+  const [password, setPassword] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [action, setAction] = useState('');
+  const auth = useAuthStore();
+  const savePassword = async () => {
+    setSaving(true);
+    try {
+      await updatePassword(password);
+      setPassword('');
+    } finally {
+      setSaving(false);
+    }
+  };
+  const reset = async () => {
+    setAction('reset');
+    try {
+      await requestPasswordReset();
+    } finally {
+      setAction('');
+    }
+  };
+  const allOut = async () => {
+    setAction('logout');
+    try {
+      await signOutAllSessions();
+      await logout();
+    } finally {
+      setAction('');
+    }
+  };
+  return (
+    <div className="mx-page">
+      <div className="mx-shell mx-account-page">
+        <div className="mx-breadcrumb">
+          <Link to="/account">{fa ? 'حساب کاربری' : 'Account'}</Link>
+          <span>›</span>
+          <strong>{fa ? 'امنیت' : 'Security'}</strong>
+        </div>
+        <div className="mx-account-heading">
+          <div>
+            <span className="mx-section-kicker">SECURITY CENTER</span>
+            <h1>{fa ? 'امنیت حساب' : 'Account security'}</h1>
+            <p>{fa ? 'مدیریت رمز عبور و نشست‌های ورود.' : 'Manage your password and active sessions.'}</p>
+          </div>
+        </div>
+        <div className="mx-security-grid">
+          <Card>
+            <div className="mx-card-title">
+              <KeyRound size={16} />
+              <h2>{fa ? 'تغییر رمز عبور' : 'Change password'}</h2>
+            </div>
+            <Input
+              label={fa ? 'رمز عبور جدید' : 'New password'}
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              dir="ltr"
+            />
+            <Button
+              onClick={() => void savePassword()}
+              loading={saving}
+              disabled={password.length < 8}
+              icon={<ShieldCheck size={15} />}
+            >
+              {fa ? 'ذخیره رمز جدید' : 'Save new password'}
+            </Button>
+          </Card>
+          <Card>
+            <div className="mx-card-title">
+              <ShieldCheck size={16} />
+              <h2>{fa ? 'بازیابی رمز' : 'Password recovery'}</h2>
+            </div>
+            <p className="mx-muted">
+              {fa
+                ? 'یک لینک امن بازیابی به ایمیل فعلی حساب ارسال می‌شود.'
+                : 'A secure reset link will be sent to your account email.'}
+            </p>
+            <Button variant="outline" onClick={() => void reset()} loading={action === 'reset'}>
+              {fa ? 'ارسال لینک بازیابی' : 'Send reset link'}
+            </Button>
+          </Card>
+          <Card>
+            <div className="mx-card-title">
+              <LogOut size={16} />
+              <h2>{fa ? 'خروج از همه نشست‌ها' : 'Sign out all sessions'}</h2>
+            </div>
+            <p className="mx-muted">
+              {fa ? 'تمام نشست‌های فعال کاربر بسته خواهند شد.' : 'End all active sessions for this account.'}
+            </p>
+            <Button variant="danger" onClick={() => void allOut()} loading={action === 'logout'}>
+              {fa ? 'خروج از همه دستگاه‌ها' : 'Sign out everywhere'}
+            </Button>
+          </Card>
+        </div>
+        <div className="mx-muted mx-security-note">{auth.appUser?.email || auth.user?.email || ''}</div>
+      </div>
+    </div>
+  );
+}

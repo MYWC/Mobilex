@@ -10,7 +10,8 @@ const messages = {
     appVersion: '2.0',
     heroEyebrow: 'نسل جدید فروشگاه موبایل',
     heroTitle: 'Mobilex 2.0 از همین‌جا شروع می‌شود.',
-    heroText: 'هسته‌ی جدید فروشگاه برای سرعت، مقیاس‌پذیری، تجربه کاربری حرفه‌ای و توسعه‌ی بدون آشفتگی ساخته شده است.',
+    heroText:
+      'هسته‌ی جدید فروشگاه برای سرعت، مقیاس‌پذیری، تجربه کاربری حرفه‌ای و توسعه‌ی بدون آشفتگی ساخته شده است.',
     configured: 'Supabase متصل است',
     notConfigured: 'Supabase هنوز تنظیم نشده',
     architecture: 'Core Architecture',
@@ -35,7 +36,8 @@ const messages = {
     foundationTitle: 'ستون فقرات Mobilex 2.0',
     foundationDescription: 'قابلیت‌های بعدی دقیقاً روی همین قراردادهای مرکزی ساخته خواهند شد.',
     dataReadyTitle: 'Supabase آماده‌ی اتصال کنترل‌شده است',
-    dataReadyText: 'کلاینت مرکزی، auth listener، repository wrapper، ENV validation و error normalization در لایه هسته قرار گرفته‌اند.',
+    dataReadyText:
+      'کلاینت مرکزی، auth listener، repository wrapper، ENV validation و error normalization در لایه هسته قرار گرفته‌اند.',
     inspectStructure: 'مشاهده ساختار',
     register: 'ثبت‌نام',
   },
@@ -44,7 +46,8 @@ const messages = {
     appVersion: '2.0',
     heroEyebrow: 'Next-generation mobile store',
     heroTitle: 'Mobilex 2.0 starts here.',
-    heroText: 'A new foundation built for speed, scale, polished UX, and a codebase that stays maintainable as the store grows.',
+    heroText:
+      'A new foundation built for speed, scale, polished UX, and a codebase that stays maintainable as the store grows.',
     configured: 'Supabase connected',
     notConfigured: 'Supabase is not configured yet',
     architecture: 'Core Architecture',
@@ -69,7 +72,8 @@ const messages = {
     foundationTitle: 'The Mobilex 2.0 foundation',
     foundationDescription: 'Every large feature that follows is built on these central contracts.',
     dataReadyTitle: 'Supabase is ready for controlled integration',
-    dataReadyText: 'Central client, auth listener, repository wrapper, environment validation, and error normalization now live in the core.',
+    dataReadyText:
+      'Central client, auth listener, repository wrapper, environment validation, and error normalization now live in the core.',
     inspectStructure: 'Explore the foundation',
     register: 'Register',
   },

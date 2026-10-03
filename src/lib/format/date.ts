@@ -1,6 +1,10 @@
 import type { Locale } from '@/types/core';
 
-export function formatDate(value: string | number | Date, locale: Locale, options?: Intl.DateTimeFormatOptions): string {
+export function formatDate(
+  value: string | number | Date,
+  locale: Locale,
+  options?: Intl.DateTimeFormatOptions,
+): string {
   const date = value instanceof Date ? value : new Date(value);
   return new Intl.DateTimeFormat(locale === 'fa' ? 'fa-IR' : 'en-US', {
     year: 'numeric',

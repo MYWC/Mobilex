@@ -8,6 +8,23 @@ import { CompareTray } from '@/components/compare/CompareTray';
 export function AppChrome({ children }: PropsWithChildren) {
   const location = useLocation();
   const isAdmin = location.pathname === '/admin' || location.pathname.startsWith('/admin/');
-  if (isAdmin) return <div className="mx-app-frame mx-admin-frame"><div id="main-content" tabIndex={-1} className="mx-main-content">{children}</div></div>;
-  return <div className="mx-app-frame"><SiteHeader/><CompareTray/><main id="main-content" tabIndex={-1} className="mx-main-content">{children}</main><SiteFooter/><MobileBottomNav/></div>;
+  if (isAdmin)
+    return (
+      <div className="mx-app-frame mx-admin-frame">
+        <div id="main-content" tabIndex={-1} className="mx-main-content">
+          {children}
+        </div>
+      </div>
+    );
+  return (
+    <div className="mx-app-frame">
+      <SiteHeader />
+      <CompareTray />
+      <main id="main-content" tabIndex={-1} className="mx-main-content">
+        {children}
+      </main>
+      <SiteFooter />
+      <MobileBottomNav />
+    </div>
+  );
 }

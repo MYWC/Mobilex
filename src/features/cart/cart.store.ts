@@ -6,21 +6,25 @@ import { EVENTS, STORAGE_KEYS } from '@/app/config/constants';
 import { readValidatedStorage, writeStorage } from '@/lib/storage/storage';
 import { emit } from '@/lib/events/bus';
 
-const schema = z.array(z.object({
-  cartKey: z.string().min(1).max(256),
-  id: z.string().min(1),
-  variantId: z.string().nullable().optional(),
-  variantLabel: z.string().optional(),
-  name_fa: z.string().optional(),
-  name_en: z.string().optional(),
-  slug: z.string().optional(),
-  price: z.number().finite().nonnegative(),
-  compareAtPrice: z.number().finite().nonnegative().optional(),
-  quantity: z.number().int().positive().max(COMMERCE.maxQuantityPerLine),
-  image: z.string().optional(),
-  maxQuantity: z.number().int().positive().max(COMMERCE.maxQuantityPerLine).optional(),
-  metadata: z.record(z.string(), z.unknown()).optional(),
-})).max(COMMERCE.maxCartLines);
+const schema = z
+  .array(
+    z.object({
+      cartKey: z.string().min(1).max(256),
+      id: z.string().min(1),
+      variantId: z.string().nullable().optional(),
+      variantLabel: z.string().optional(),
+      name_fa: z.string().optional(),
+      name_en: z.string().optional(),
+      slug: z.string().optional(),
+      price: z.number().finite().nonnegative(),
+      compareAtPrice: z.number().finite().nonnegative().optional(),
+      quantity: z.number().int().positive().max(COMMERCE.maxQuantityPerLine),
+      image: z.string().optional(),
+      maxQuantity: z.number().int().positive().max(COMMERCE.maxQuantityPerLine).optional(),
+      metadata: z.record(z.string(), z.unknown()).optional(),
+    }),
+  )
+  .max(COMMERCE.maxCartLines);
 
 interface CartState {
   items: CartLine[];
@@ -43,7 +47,14 @@ interface CartState {
 }
 
 const clampQuantity = (item: CartLine, requested: number): number =>
-  Math.max(1, Math.min(COMMERCE.maxQuantityPerLine, item.maxQuantity ?? COMMERCE.maxQuantityPerLine, Math.round(requested)));
+  Math.max(
+    1,
+    Math.min(
+      COMMERCE.maxQuantityPerLine,
+      item.maxQuantity ?? COMMERCE.maxQuantityPerLine,
+      Math.round(requested),
+    ),
+  );
 
 const persist = (items: CartLine[]): void => {
   writeStorage(STORAGE_KEYS.cart, items);
@@ -108,16 +119,19 @@ export const useCartStore = create<CartState>((set, get) => ({
   updateQuantity: (cartKey, quantity) => {
     const item = get().items.find((x) => x.cartKey === cartKey);
     if (!item) return;
-    const items = get().items.map((x) => (x.cartKey === cartKey ? { ...x, quantity: clampQuantity(x, quantity) } : x));
+    const items = get().items.map((x) =>
+      x.cartKey === cartKey ? { ...x, quantity: clampQuantity(x, quantity) } : x,
+    );
     persist(items);
     set({ items });
   },
 
-  setSelected: (cartKey, selected) => set({
-    selected: selected
-      ? [...new Set([...get().selected, cartKey])]
-      : get().selected.filter((key) => key !== cartKey),
-  }),
+  setSelected: (cartKey, selected) =>
+    set({
+      selected: selected
+        ? [...new Set([...get().selected, cartKey])]
+        : get().selected.filter((key) => key !== cartKey),
+    }),
 
   selectAll: (selected) => set({ selected: selected ? get().items.map((item) => item.cartKey) : [] }),
 
@@ -137,8 +151,9 @@ export const useCartStore = create<CartState>((set, get) => ({
   setIssues: (issues) => set({ issues }),
   count: () => get().items.reduce((sum, item) => sum + item.quantity, 0),
   subtotal: () => get().items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-  savings: () => get().items.reduce(
-    (sum, item) => sum + Math.max(0, (item.compareAtPrice ?? item.price) - item.price) * item.quantity,
-    0,
-  ),
+  savings: () =>
+    get().items.reduce(
+      (sum, item) => sum + Math.max(0, (item.compareAtPrice ?? item.price) - item.price) * item.quantity,
+      0,
+    ),
 }));

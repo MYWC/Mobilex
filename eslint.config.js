@@ -5,13 +5,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: [
-      'dist',
-      'coverage',
-      'node_modules',
-      'scripts/**/*.mjs',
-      'public/sw.js',
-    ],
+    ignores: ['dist', 'coverage', 'node_modules', 'scripts/**/*.mjs', 'public/sw.js'],
   },
 
   js.configs.recommended,
@@ -28,10 +22,7 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
 
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
       '@typescript-eslint/no-unused-vars': [
         'warn',

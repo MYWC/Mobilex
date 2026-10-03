@@ -4,7 +4,11 @@ const isProduction = import.meta.env.PROD;
 
 function contextToString(context?: Record<string, unknown>): string {
   if (!context || Object.keys(context).length === 0) return '';
-  try { return ` ${JSON.stringify(context)}`; } catch { return ''; }
+  try {
+    return ` ${JSON.stringify(context)}`;
+  } catch {
+    return '';
+  }
 }
 
 export const logger = {

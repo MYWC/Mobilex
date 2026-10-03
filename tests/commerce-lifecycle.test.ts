@@ -5,7 +5,11 @@ import { getShippingOption } from '@/features/commerce/shipping.service';
 describe('commerce lifecycle contracts', () => {
   it('free shipping threshold is evaluated after coupon discount', () => {
     const lines = [{ cartKey: 'a', id: 'a', price: 5_100_000, compareAtPrice: 5_500_000, quantity: 1 }];
-    const pricing = calculatePricing({ lines, couponDiscount: 200_000, shipping: getShippingOption('standard') });
+    const pricing = calculatePricing({
+      lines,
+      couponDiscount: 200_000,
+      shipping: getShippingOption('standard'),
+    });
     expect(pricing.shipping).toBe(85_000);
   });
 
@@ -17,7 +21,11 @@ describe('commerce lifecycle contracts', () => {
 
   it('negative coupon discounts can never reduce the total', () => {
     const lines = [{ cartKey: 'a', id: 'a', price: 1_000_000, quantity: 1 }];
-    const pricing = calculatePricing({ lines, couponDiscount: -1_000_000, shipping: getShippingOption('standard') });
+    const pricing = calculatePricing({
+      lines,
+      couponDiscount: -1_000_000,
+      shipping: getShippingOption('standard'),
+    });
     expect(pricing.couponDiscount).toBe(0);
     expect(pricing.payableTotal).toBe(1_085_000);
   });

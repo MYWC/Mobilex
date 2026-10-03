@@ -3,7 +3,14 @@ import type { CartLine } from '@/features/cart/cart.types';
 export type CheckoutStep = 'review' | 'address' | 'shipping' | 'payment' | 'confirm';
 export type PaymentMethod = 'cod' | 'online' | 'wallet';
 export type ShippingMethod = 'standard' | 'express' | 'pickup';
-export type OrderStatus = 'processing' | 'pending_payment' | 'paid' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
+export type OrderStatus =
+  | 'processing'
+  | 'pending_payment'
+  | 'paid'
+  | 'shipped'
+  | 'delivered'
+  | 'cancelled'
+  | 'returned';
 export type PaymentStatus = 'pending' | 'unpaid' | 'paid' | 'failed' | 'refunded' | 'cancelled';
 
 export interface CommerceAddress {

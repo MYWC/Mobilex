@@ -13,10 +13,14 @@ export function migrateLegacyStorage(): void {
 }
 
 export function runStorageMigrations(): void {
-  migrateArrayKey(LEGACY_STORAGE_KEYS.cart, STORAGE_KEYS.cart, (value) =>
-    Array.isArray(value) && value.every((x) => x && typeof x === 'object'),
+  migrateArrayKey(
+    LEGACY_STORAGE_KEYS.cart,
+    STORAGE_KEYS.cart,
+    (value) => Array.isArray(value) && value.every((x) => x && typeof x === 'object'),
   );
-  migrateArrayKey(LEGACY_STORAGE_KEYS.wishlist, STORAGE_KEYS.wishlist, (value) =>
-    Array.isArray(value) && value.every((x) => typeof x === 'string'),
+  migrateArrayKey(
+    LEGACY_STORAGE_KEYS.wishlist,
+    STORAGE_KEYS.wishlist,
+    (value) => Array.isArray(value) && value.every((x) => typeof x === 'string'),
   );
 }

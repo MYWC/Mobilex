@@ -5,6 +5,7 @@
 This release sits directly on Phase 4 Commerce and adds a unified customer layer.
 
 ### Core features
+
 - Account Center with live account metrics
 - Address Book using existing Phase 4 address service
 - Security Center for password changes and recovery
@@ -20,6 +21,7 @@ This release sits directly on Phase 4 Commerce and adds a unified customer layer
 - Graceful fallback when Phase 5 database migration has not yet been applied
 
 ## Routes
+
 - /account
 - /account/addresses
 - /account/security
@@ -29,11 +31,15 @@ This release sits directly on Phase 4 Commerce and adds a unified customer layer
 - /notifications
 
 ## Database
+
 Apply:
+
 - supabase/migrations/0007_account_wishlist_notifications.sql
 
 ## Verification
+
 Static validation completed:
+
 - Foundation preflight: PASS
 - Commerce preflight: PASS
 - Phase 5 preflight: PASS

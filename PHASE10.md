@@ -3,7 +3,9 @@
 This is the final hardening phase. It closes production-mode demo fallbacks, adds a generic signed payment gateway boundary, webhook replay protection, release readiness UI, final CI gates, security metadata, and final release polish.
 
 ## Live payment adapter
+
 Configure server-side Edge Function secrets:
+
 - PAYMENT_PROVIDER
 - PAYMENT_GATEWAY_URL
 - PAYMENT_GATEWAY_SECRET
@@ -14,6 +16,7 @@ Configure server-side Edge Function secrets:
 The gateway contract for `create-payment-session` must return `paymentId`, `redirectUrl`, `amount`, and optionally `expiresAt`. The webhook contract must send `orderId`, `paymentId`, `status`, `provider`, and a stable `eventId`; the raw JSON is signed with HMAC-SHA256 in `x-payment-signature` (`sha256=<hex>` is accepted).
 
 ## Final checks
+
 Run:
 `npm run quality:phase10`
 

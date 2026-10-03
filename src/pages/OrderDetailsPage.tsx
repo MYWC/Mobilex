@@ -1,4 +1,15 @@
-import { ArrowLeft, Ban, CheckCircle2, Clock3, Copy, CreditCard, MapPin, Package, RefreshCw, Truck } from 'lucide-react';
+import {
+  ArrowLeft,
+  Ban,
+  CheckCircle2,
+  Clock3,
+  Copy,
+  CreditCard,
+  MapPin,
+  Package,
+  RefreshCw,
+  Truck,
+} from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAppStore } from '@/stores/useAppStore';
@@ -9,7 +20,18 @@ import { getOrderDetail, cancelMyOrder, reorderOrder } from '@/features/orders/o
 import type { OrderDetailResult } from '@/features/orders/orders.types';
 import { formatCurrency } from '@/lib/format/number';
 
-const statusLabels=(s:string,fa:boolean)=>({pending_payment:fa?'در انتظار پرداخت':'Pending payment',processing:fa?'در حال پردازش':'Processing',paid:fa?'پرداخت‌شده':'Paid',shipped:fa?'ارسال‌شده':'Shipped',delivered:fa?'تحویل‌شده':'Delivered',cancelled:fa?'لغو شده':'Cancelled',returned:fa?'مرجوعی':'Returned'} as Record<string,string>)[s]??s;
+const statusLabels = (s: string, fa: boolean) =>
+  (
+    ({
+      pending_payment: fa ? 'در انتظار پرداخت' : 'Pending payment',
+      processing: fa ? 'در حال پردازش' : 'Processing',
+      paid: fa ? 'پرداخت‌شده' : 'Paid',
+      shipped: fa ? 'ارسال‌شده' : 'Shipped',
+      delivered: fa ? 'تحویل‌شده' : 'Delivered',
+      cancelled: fa ? 'لغو شده' : 'Cancelled',
+      returned: fa ? 'مرجوعی' : 'Returned',
+    }) as Record<string, string>
+  )[s] ?? s;
 const tone = (s: string) =>
   s === 'delivered'
     ? 'success'
@@ -18,5 +40,239 @@ const tone = (s: string) =>
       : s === 'pending_payment'
         ? 'warning'
         : 'info';
-export function OrderDetailsPage(){const{orderId}=useParams();const fa=useAppStore(s=>s.locale)==='fa';const nav=useNavigate();const[data,setData]=useState<OrderDetailResult|null>(null);const[loading,setLoading]=useState(true);const[action,setAction]=useState(false);const[error,setError]=useState(false);useEffect(()=>{if(!orderId)return;void getOrderDetail(orderId).then(setData).catch(()=>setError(true)).finally(()=>setLoading(false))},[orderId]);if(loading)return <div className="mx-page"><div className="mx-shell mx-order-loading"><div className="mx-spinner"/></div></div>;if(error||!data)return <div className="mx-page"><div className="mx-shell"><Card><h1>{error?(fa?'خطا در دریافت سفارش':'Unable to load order'):(fa?'سفارش پیدا نشد':'Order not found')}</h1><Link to="/orders"><Button>{fa?'بازگشت':'Back'}</Button></Link></Card></div></div>;const o=data.order;const canCancel=['processing','pending_payment'].includes(o.status);const copy=async()=>{await navigator.clipboard?.writeText(o.orderNumber)};const cancel=async()=>{setAction(true);try{const ok=await cancelMyOrder(o.id);if(ok)setData(await getOrderDetail(o.id));}finally{setAction(false)}};const reorder=async()=>{setAction(true);try{const r=await reorderOrder(o);nav('/cart')}finally{setAction(false)}};
- return <div className="mx-page"><div className="mx-shell mx-account-page"><div className="mx-breadcrumb"><Link to="/orders">{fa?'سفارش‌ها':'Orders'}</Link><span>›</span><strong>{o.orderNumber}</strong></div><div className="mx-account-heading"><div><span className="mx-section-kicker">ORDER DETAIL</span><h1>{o.orderNumber}</h1><p>{new Date(o.createdAt).toLocaleString(fa?'fa-IR':'en-US')}</p></div><div className="mx-account-actions"><StatusPill tone={tone(o.status)}>{statusLabels(o.status,fa)}</StatusPill><Button variant="outline" onClick={()=>void copy()} icon={<Copy size={15}/>}>{fa?'کپی شماره':'Copy number'}</Button></div></div><div className="mx-order-detail-grid"><section><Card className="mx-order-tracker"><div className="mx-order-tracker-title"><Package size={16}/><span>{fa?'مسیر سفارش':'Order progress'}</span></div><div className="mx-timeline">{[{key:'created',label:fa?'ثبت سفارش':'Created',icon:Clock3},{key:'paid',label:fa?'پرداخت':'Paid',icon:CreditCard},{key:'shipped',label:fa?'ارسال':'Shipped',icon:Truck},{key:'delivered',label:fa?'تحویل':'Delivered',icon:CheckCircle2}].map((step,index)=>{const active=o.status==='delivered'||o.status==='shipped'&&index<3||o.status==='paid'&&index<2||['processing','pending_payment'].includes(o.status)&&index===0;const I=step.icon;return <div className={active?'mx-timeline-step is-active':'mx-timeline-step'} key={step.key}><span><I size={16}/></span><div><strong>{step.label}</strong>{active&&<small>{fa?'انجام شده یا در حال انجام':'Completed or current'}</small>}</div></div>})}</div></Card><Card className="mx-order-items-card"><div className="mx-card-title"><Package size={16}/><h2>{fa?'اقلام سفارش':'Order items'}</h2></div><div className="mx-order-items">{o.items.map(item=><div className="mx-order-item" key={item.id}><div><strong>{item.productName}</strong>{item.variantLabel&&<span>{item.variantLabel}</span>}<small>{item.quantity} × {formatCurrency(item.unitPrice,fa?'fa':'en')}</small></div><strong>{formatCurrency(item.lineTotal,fa?'fa':'en')}</strong></div>)}</div></Card><Card className="mx-order-events"><div className="mx-card-title"><Clock3 size={16}/><h2>{fa?'تاریخچه وضعیت':'Activity timeline'}</h2></div><div className="mx-event-list">{data.events.map(e=><div className="mx-event-row" key={e.id}><span className="mx-event-dot"/><div><strong>{e.message||e.eventType}</strong><time>{new Date(e.createdAt).toLocaleString(fa?'fa-IR':'en-US')}</time></div></div>)}</div></Card></section><aside><Card className="mx-order-summary-card"><span className="mx-section-kicker">PAYMENT</span><div className="mx-summary-line"><span>{fa?'جمع کالاها':'Subtotal'}</span><strong>{formatCurrency(o.subtotal,fa?'fa':'en')}</strong></div><div className="mx-summary-line"><span>{fa?'تخفیف کالا':'Item discount'}</span><strong className="positive">− {formatCurrency(o.itemDiscount,fa?'fa':'en')}</strong></div><div className="mx-summary-line"><span>{fa?'کد تخفیف':'Coupon'}</span><strong>{o.couponDiscount?`− ${formatCurrency(o.couponDiscount,fa?'fa':'en')}`:'—'}</strong></div><div className="mx-summary-line"><span>{fa?'ارسال':'Shipping'}</span><strong>{formatCurrency(o.shippingAmount,fa?'fa':'en')}</strong></div><div className="mx-summary-total"><span>{fa?'مبلغ نهایی':'Grand total'}</span><strong>{formatCurrency(o.totalAmount,fa?'fa':'en')}</strong></div><div className="mx-order-actions">{canCancel&&<Button variant="danger" onClick={()=>void cancel()} loading={action} icon={<Ban size={15}/>}>{fa?'لغو سفارش':'Cancel order'}</Button>}<Button variant="outline" onClick={()=>void reorder()} loading={action} icon={<RefreshCw size={15}/>}>{fa?'خرید مجدد':'Buy again'}</Button></div></Card><Card className="mx-address-card"><div className="mx-card-title"><MapPin size={16}/><h2>{fa?'آدرس تحویل':'Delivery address'}</h2></div><strong>{o.recipientName}</strong><span>{o.phone}</span><p>{o.province}، {o.city}، {o.addressLine}</p>{o.plaque&&<small>{fa?'پلاک':'Plaque'}: {o.plaque}{o.unit?` · ${fa?'واحد':'Unit'} ${o.unit}`:''}</small>}</Card></aside></div><Link to="/orders" className="mx-back-link"><ArrowLeft size={14}/>{fa?'بازگشت به سفارش‌ها':'Back to orders'}</Link></div></div>}
+export function OrderDetailsPage() {
+  const { orderId } = useParams();
+  const fa = useAppStore((s) => s.locale) === 'fa';
+  const nav = useNavigate();
+  const [data, setData] = useState<OrderDetailResult | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [action, setAction] = useState(false);
+  const [error, setError] = useState(false);
+  useEffect(() => {
+    if (!orderId) return;
+    void getOrderDetail(orderId)
+      .then(setData)
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
+  }, [orderId]);
+  if (loading)
+    return (
+      <div className="mx-page">
+        <div className="mx-shell mx-order-loading">
+          <div className="mx-spinner" />
+        </div>
+      </div>
+    );
+  if (error || !data)
+    return (
+      <div className="mx-page">
+        <div className="mx-shell">
+          <Card>
+            <h1>
+              {error
+                ? fa
+                  ? 'خطا در دریافت سفارش'
+                  : 'Unable to load order'
+                : fa
+                  ? 'سفارش پیدا نشد'
+                  : 'Order not found'}
+            </h1>
+            <Link to="/orders">
+              <Button>{fa ? 'بازگشت' : 'Back'}</Button>
+            </Link>
+          </Card>
+        </div>
+      </div>
+    );
+  const o = data.order;
+  const canCancel = ['processing', 'pending_payment'].includes(o.status);
+  const copy = async () => {
+    await navigator.clipboard?.writeText(o.orderNumber);
+  };
+  const cancel = async () => {
+    setAction(true);
+    try {
+      const ok = await cancelMyOrder(o.id);
+      if (ok) setData(await getOrderDetail(o.id));
+    } finally {
+      setAction(false);
+    }
+  };
+  const reorder = async () => {
+    setAction(true);
+    try {
+      const r = await reorderOrder(o);
+      nav('/cart');
+    } finally {
+      setAction(false);
+    }
+  };
+  return (
+    <div className="mx-page">
+      <div className="mx-shell mx-account-page">
+        <div className="mx-breadcrumb">
+          <Link to="/orders">{fa ? 'سفارش‌ها' : 'Orders'}</Link>
+          <span>›</span>
+          <strong>{o.orderNumber}</strong>
+        </div>
+        <div className="mx-account-heading">
+          <div>
+            <span className="mx-section-kicker">ORDER DETAIL</span>
+            <h1>{o.orderNumber}</h1>
+            <p>{new Date(o.createdAt).toLocaleString(fa ? 'fa-IR' : 'en-US')}</p>
+          </div>
+          <div className="mx-account-actions">
+            <StatusPill tone={tone(o.status)}>{statusLabels(o.status, fa)}</StatusPill>
+            <Button variant="outline" onClick={() => void copy()} icon={<Copy size={15} />}>
+              {fa ? 'کپی شماره' : 'Copy number'}
+            </Button>
+          </div>
+        </div>
+        <div className="mx-order-detail-grid">
+          <section>
+            <Card className="mx-order-tracker">
+              <div className="mx-order-tracker-title">
+                <Package size={16} />
+                <span>{fa ? 'مسیر سفارش' : 'Order progress'}</span>
+              </div>
+              <div className="mx-timeline">
+                {[
+                  { key: 'created', label: fa ? 'ثبت سفارش' : 'Created', icon: Clock3 },
+                  { key: 'paid', label: fa ? 'پرداخت' : 'Paid', icon: CreditCard },
+                  { key: 'shipped', label: fa ? 'ارسال' : 'Shipped', icon: Truck },
+                  { key: 'delivered', label: fa ? 'تحویل' : 'Delivered', icon: CheckCircle2 },
+                ].map((step, index) => {
+                  const active =
+                    o.status === 'delivered' ||
+                    (o.status === 'shipped' && index < 3) ||
+                    (o.status === 'paid' && index < 2) ||
+                    (['processing', 'pending_payment'].includes(o.status) && index === 0);
+                  const I = step.icon;
+                  return (
+                    <div
+                      className={active ? 'mx-timeline-step is-active' : 'mx-timeline-step'}
+                      key={step.key}
+                    >
+                      <span>
+                        <I size={16} />
+                      </span>
+                      <div>
+                        <strong>{step.label}</strong>
+                        {active && <small>{fa ? 'انجام شده یا در حال انجام' : 'Completed or current'}</small>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+            <Card className="mx-order-items-card">
+              <div className="mx-card-title">
+                <Package size={16} />
+                <h2>{fa ? 'اقلام سفارش' : 'Order items'}</h2>
+              </div>
+              <div className="mx-order-items">
+                {o.items.map((item) => (
+                  <div className="mx-order-item" key={item.id}>
+                    <div>
+                      <strong>{item.productName}</strong>
+                      {item.variantLabel && <span>{item.variantLabel}</span>}
+                      <small>
+                        {item.quantity} × {formatCurrency(item.unitPrice, fa ? 'fa' : 'en')}
+                      </small>
+                    </div>
+                    <strong>{formatCurrency(item.lineTotal, fa ? 'fa' : 'en')}</strong>
+                  </div>
+                ))}
+              </div>
+            </Card>
+            <Card className="mx-order-events">
+              <div className="mx-card-title">
+                <Clock3 size={16} />
+                <h2>{fa ? 'تاریخچه وضعیت' : 'Activity timeline'}</h2>
+              </div>
+              <div className="mx-event-list">
+                {data.events.map((e) => (
+                  <div className="mx-event-row" key={e.id}>
+                    <span className="mx-event-dot" />
+                    <div>
+                      <strong>{e.message || e.eventType}</strong>
+                      <time>{new Date(e.createdAt).toLocaleString(fa ? 'fa-IR' : 'en-US')}</time>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </section>
+          <aside>
+            <Card className="mx-order-summary-card">
+              <span className="mx-section-kicker">PAYMENT</span>
+              <div className="mx-summary-line">
+                <span>{fa ? 'جمع کالاها' : 'Subtotal'}</span>
+                <strong>{formatCurrency(o.subtotal, fa ? 'fa' : 'en')}</strong>
+              </div>
+              <div className="mx-summary-line">
+                <span>{fa ? 'تخفیف کالا' : 'Item discount'}</span>
+                <strong className="positive">− {formatCurrency(o.itemDiscount, fa ? 'fa' : 'en')}</strong>
+              </div>
+              <div className="mx-summary-line">
+                <span>{fa ? 'کد تخفیف' : 'Coupon'}</span>
+                <strong>
+                  {o.couponDiscount ? `− ${formatCurrency(o.couponDiscount, fa ? 'fa' : 'en')}` : '—'}
+                </strong>
+              </div>
+              <div className="mx-summary-line">
+                <span>{fa ? 'ارسال' : 'Shipping'}</span>
+                <strong>{formatCurrency(o.shippingAmount, fa ? 'fa' : 'en')}</strong>
+              </div>
+              <div className="mx-summary-total">
+                <span>{fa ? 'مبلغ نهایی' : 'Grand total'}</span>
+                <strong>{formatCurrency(o.totalAmount, fa ? 'fa' : 'en')}</strong>
+              </div>
+              <div className="mx-order-actions">
+                {canCancel && (
+                  <Button
+                    variant="danger"
+                    onClick={() => void cancel()}
+                    loading={action}
+                    icon={<Ban size={15} />}
+                  >
+                    {fa ? 'لغو سفارش' : 'Cancel order'}
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  onClick={() => void reorder()}
+                  loading={action}
+                  icon={<RefreshCw size={15} />}
+                >
+                  {fa ? 'خرید مجدد' : 'Buy again'}
+                </Button>
+              </div>
+            </Card>
+            <Card className="mx-address-card">
+              <div className="mx-card-title">
+                <MapPin size={16} />
+                <h2>{fa ? 'آدرس تحویل' : 'Delivery address'}</h2>
+              </div>
+              <strong>{o.recipientName}</strong>
+              <span>{o.phone}</span>
+              <p>
+                {o.province}، {o.city}، {o.addressLine}
+              </p>
+              {o.plaque && (
+                <small>
+                  {fa ? 'پلاک' : 'Plaque'}: {o.plaque}
+                  {o.unit ? ` · ${fa ? 'واحد' : 'Unit'} ${o.unit}` : ''}
+                </small>
+              )}
+            </Card>
+          </aside>
+        </div>
+        <Link to="/orders" className="mx-back-link">
+          <ArrowLeft size={14} />
+          {fa ? 'بازگشت به سفارش‌ها' : 'Back to orders'}
+        </Link>
+      </div>
+    </div>
+  );
+}

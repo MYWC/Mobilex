@@ -24,14 +24,18 @@ export function getReleaseSnapshot(): ReleaseSnapshot {
       id: 'supabase',
       label: 'Supabase',
       ok: appEnv.isSupabaseConfigured,
-      detail: appEnv.isSupabaseConfigured ? 'Client credentials are configured.' : 'Configure VITE_SUPABASE_URL and the publishable/anon key.',
+      detail: appEnv.isSupabaseConfigured
+        ? 'Client credentials are configured.'
+        : 'Configure VITE_SUPABASE_URL and the publishable/anon key.',
       severity: 'critical',
     },
     {
       id: 'demo',
       label: 'Demo mode',
       ok: !appEnv.isProduction || !appEnv.allowDemoMode,
-      detail: appEnv.isProduction ? 'Production demo fallback is disabled.' : 'Demo fallback is allowed only for development.',
+      detail: appEnv.isProduction
+        ? 'Production demo fallback is disabled.'
+        : 'Demo fallback is allowed only for development.',
       severity: 'critical',
     },
     {
@@ -59,7 +63,10 @@ export function getReleaseSnapshot(): ReleaseSnapshot {
       id: 'payment-boundary',
       label: 'Payment boundary',
       ok: !appEnv.isProduction || appEnv.paymentMode !== 'live' || appEnv.isSupabaseConfigured,
-      detail: appEnv.paymentMode === 'live' ? 'Live payment mode is declared; verify server-side gateway, webhook and staging transactions before launch.' : 'Payment secrets and webhook verification remain server-side; configure the gateway adapter before accepting live payments.',
+      detail:
+        appEnv.paymentMode === 'live'
+          ? 'Live payment mode is declared; verify server-side gateway, webhook and staging transactions before launch.'
+          : 'Payment secrets and webhook verification remain server-side; configure the gateway adapter before accepting live payments.',
       severity: 'warning',
     },
   ];

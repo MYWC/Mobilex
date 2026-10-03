@@ -55,7 +55,8 @@ export function normalizeError(error: unknown): AppError {
   if (error instanceof Error && /timeout|timed out/i.test(error.message)) {
     return new AppError('TIMEOUT', 'The request timed out.', { cause: error, retryable: true });
   }
-  if (error instanceof Error) return new AppError('UNKNOWN', error.message || 'Unknown application error.', { cause: error });
+  if (error instanceof Error)
+    return new AppError('UNKNOWN', error.message || 'Unknown application error.', { cause: error });
   return new AppError('UNKNOWN', 'An unknown application error occurred.', { cause: error });
 }
 
@@ -82,17 +83,26 @@ export function fail<T = never>(error: unknown, meta?: ApiMeta): ApiResult<T> {
 
 export function assertOk<T>(result: ApiResult<T>): T {
   if (result.ok) return result.data;
-  throw new AppError(
-    (result.error.code as AppErrorCode) || 'UNKNOWN',
-    result.error.message,
-    { retryable: result.error.retryable, status: result.error.status, details: result.error.details },
-  );
+  throw new AppError((result.error.code as AppErrorCode) || 'UNKNOWN', result.error.message, {
+    retryable: result.error.retryable,
+    status: result.error.status,
+    details: result.error.details,
+  });
 }
 
 export function isAppErrorCode(value: string): value is AppErrorCode {
   return [
-    'UNKNOWN', 'CONFIGURATION', 'NETWORK', 'TIMEOUT', 'AUTH_REQUIRED',
-    'FORBIDDEN', 'NOT_FOUND', 'VALIDATION', 'DATABASE', 'RATE_LIMIT',
-    'CONFLICT', 'ABORTED',
+    'UNKNOWN',
+    'CONFIGURATION',
+    'NETWORK',
+    'TIMEOUT',
+    'AUTH_REQUIRED',
+    'FORBIDDEN',
+    'NOT_FOUND',
+    'VALIDATION',
+    'DATABASE',
+    'RATE_LIMIT',
+    'CONFLICT',
+    'ABORTED',
   ].includes(value);
 }

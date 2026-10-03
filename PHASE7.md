@@ -3,6 +3,7 @@
 Phase 7 hardens the storefront for production delivery. It adds platform capabilities without replacing the domain architecture from Phases 1–6.
 
 ## Included
+
 - PWA manifest, install prompt, service worker and update lifecycle
 - Offline banner and resilient navigation fallback
 - Route lazy-loading/code splitting
@@ -19,6 +20,7 @@ Phase 7 hardens the storefront for production delivery. It adds platform capabil
 - Stricter Supabase error handling: configured remote failures are no longer silently converted into demo data
 
 ## Commands
+
 ```bash
 npm install
 npm run validate
@@ -34,6 +36,7 @@ npm run seo:generate
 ```
 
 ### Environment additions
+
 - `VITE_PUBLIC_APP_URL` — canonical public origin used by sitemap generation
 - `VITE_OBSERVABILITY_ENDPOINT` — optional telemetry endpoint
 

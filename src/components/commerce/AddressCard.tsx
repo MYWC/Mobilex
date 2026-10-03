@@ -1,2 +1,45 @@
-import{Check,MapPin,Pencil}from'lucide-react';import{Button}from'@/components/ui/Button';import{Card}from'@/components/ui/Card';import type{CommerceAddress}from'@/features/commerce/commerce.types';import{useAppStore}from'@/stores/useAppStore';
-export function AddressCard({address,selected,onSelect,onEdit}:{address:CommerceAddress;selected:boolean;onSelect:()=>void;onEdit:()=>void}){const fa=useAppStore(s=>s.locale)==='fa';return <Card className={`mx-address-card ${selected?'is-selected':''}`}><button type="button" className="mx-address-select" onClick={onSelect}><span className="mx-radio">{selected?<Check size={12}/>:null}</span><div className="mx-address-main"><div className="mx-address-top"><strong>{address.title}</strong>{address.isDefault&&<span>{fa?'پیش‌فرض':'Default'}</span>}</div><p>{address.recipientName} · <span dir="ltr">{address.phone}</span></p><p>{address.province}، {address.city}، {address.addressLine}{address.plaque?`، ${fa?'پلاک':'No.'} ${address.plaque}`:''}{address.unit?`، ${fa?'واحد':'Unit'} ${address.unit}`:''}</p><small><MapPin size={12}/> {fa?'کد پستی':'Postal code'}: {address.postalCode}</small></div></button><Button size="xs" variant="ghost" onClick={onEdit} icon={<Pencil size={13}/>} >{fa?'ویرایش':'Edit'}</Button></Card>}
+import { Check, MapPin, Pencil } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import type { CommerceAddress } from '@/features/commerce/commerce.types';
+import { useAppStore } from '@/stores/useAppStore';
+export function AddressCard({
+  address,
+  selected,
+  onSelect,
+  onEdit,
+}: {
+  address: CommerceAddress;
+  selected: boolean;
+  onSelect: () => void;
+  onEdit: () => void;
+}) {
+  const fa = useAppStore((s) => s.locale) === 'fa';
+  return (
+    <Card className={`mx-address-card ${selected ? 'is-selected' : ''}`}>
+      <button type="button" className="mx-address-select" onClick={onSelect}>
+        <span className="mx-radio">{selected ? <Check size={12} /> : null}</span>
+        <div className="mx-address-main">
+          <div className="mx-address-top">
+            <strong>{address.title}</strong>
+            {address.isDefault && <span>{fa ? 'پیش‌فرض' : 'Default'}</span>}
+          </div>
+          <p>
+            {address.recipientName} · <span dir="ltr">{address.phone}</span>
+          </p>
+          <p>
+            {address.province}، {address.city}، {address.addressLine}
+            {address.plaque ? `، ${fa ? 'پلاک' : 'No.'} ${address.plaque}` : ''}
+            {address.unit ? `، ${fa ? 'واحد' : 'Unit'} ${address.unit}` : ''}
+          </p>
+          <small>
+            <MapPin size={12} /> {fa ? 'کد پستی' : 'Postal code'}: {address.postalCode}
+          </small>
+        </div>
+      </button>
+      <Button size="xs" variant="ghost" onClick={onEdit} icon={<Pencil size={13} />}>
+        {fa ? 'ویرایش' : 'Edit'}
+      </Button>
+    </Card>
+  );
+}

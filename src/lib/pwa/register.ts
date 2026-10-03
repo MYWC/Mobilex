@@ -3,7 +3,8 @@ import { logger } from '@/lib/logger/logger';
 import { appBasePath } from '@/lib/ux/paths';
 
 export async function registerPwa(): Promise<(() => void) | undefined> {
-  if (import.meta.env.DEV || typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return undefined;
+  if (import.meta.env.DEV || typeof navigator === 'undefined' || !('serviceWorker' in navigator))
+    return undefined;
   try {
     const base = appBasePath();
     const registration = await navigator.serviceWorker.register(`${base}sw.js`, {

@@ -17,7 +17,9 @@ for (const file of required) {
   if (!fs.existsSync(path.resolve(file))) throw new Error(`Missing GitHub Pages requirement: ${file}`);
 }
 const index = fs.readFileSync('index.html', 'utf8');
-if (!index.includes('%BASE_URL%src/main.tsx')) throw new Error('index.html must use %BASE_URL% for main.tsx');
+if (!index.includes('/src/main.tsx') && !index.includes('%BASE_URL%src/main.tsx')) {
+  throw new Error('index.html must use a valid Vite main.tsx entry path');
+}
 const vite = fs.readFileSync('vite.config.ts', 'utf8');
 if (!vite.includes("'/Mobilex/'")) throw new Error('vite.config.ts must define /Mobilex/ build base');
 console.log('GitHub Pages preflight passed.');

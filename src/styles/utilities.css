@@ -1,12 +1,59 @@
-
-.mx-stack{display:grid;gap:var(--mx-stack-gap,12px)}
-.mx-cluster{display:flex;align-items:center;flex-wrap:wrap;gap:var(--mx-cluster-gap,8px)}
-.mx-between{display:flex;align-items:center;justify-content:space-between;gap:16px}
-.mx-muted{color:var(--mx-text-soft)}
-.mx-micro{font-size:8px;color:var(--mx-text-muted)}
-.mx-surface{background:var(--mx-surface-solid);border:1px solid var(--mx-border);border-radius:var(--mx-radius-xl);box-shadow:var(--mx-shadow-soft)}
-.mx-divider{height:1px;background:var(--mx-border)}
-.mx-hide{display:none!important}
-.mx-visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-.mx-gradient-text{background:linear-gradient(135deg,var(--mx-primary),var(--mx-violet));-webkit-background-clip:text;background-clip:text;color:transparent}
-.mx-no-scrollbar{scrollbar-width:none}.mx-no-scrollbar::-webkit-scrollbar{display:none}
+.mx-stack {
+  display: grid;
+  gap: var(--mx-stack-gap, 12px);
+}
+.mx-cluster {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--mx-cluster-gap, 8px);
+}
+.mx-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.mx-muted {
+  color: var(--mx-text-soft);
+}
+.mx-micro {
+  font-size: 8px;
+  color: var(--mx-text-muted);
+}
+.mx-surface {
+  background: var(--mx-surface-solid);
+  border: 1px solid var(--mx-border);
+  border-radius: var(--mx-radius-xl);
+  box-shadow: var(--mx-shadow-soft);
+}
+.mx-divider {
+  height: 1px;
+  background: var(--mx-border);
+}
+.mx-hide {
+  display: none !important;
+}
+.mx-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+.mx-gradient-text {
+  background: linear-gradient(135deg, var(--mx-primary), var(--mx-violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.mx-no-scrollbar {
+  scrollbar-width: none;
+}
+.mx-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

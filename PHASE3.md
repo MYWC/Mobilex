@@ -1,6 +1,7 @@
 # Phase 3 — Storefront Engine
 
 ## Scope
+
 1. Data contracts and catalog repository
 2. Search state and recent search persistence
 3. Product card system
@@ -21,8 +22,8 @@
 
 Catalog is read-only in this phase. Cart/Wishlist mutation continues through their centralized Zustand stores. Server-side write validation remains a later Commerce Engine responsibility.
 
-
 ## Storefront experience added
+
 - Discoverable category rail on Home
 - Flash Sale countdown
 - Product badges, ratings, live availability presentation

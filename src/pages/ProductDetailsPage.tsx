@@ -1,4 +1,14 @@
-import { ArrowLeft, Check, GitCompareArrows, Heart, Share2, ShoppingCart, ShieldCheck, Truck, Zap } from 'lucide-react';
+import {
+  ArrowLeft,
+  Check,
+  GitCompareArrows,
+  Heart,
+  Share2,
+  ShoppingCart,
+  ShieldCheck,
+  Truck,
+  Zap,
+} from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { usePageSeo } from '@/hooks/usePageSeo';
@@ -25,18 +35,375 @@ import { ProductQuestions } from '@/components/qa/ProductQuestions';
 import { SmartDiscovery } from '@/components/growth/SmartDiscovery';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 
-export function ProductDetailsPage(){
- const {slug} = useParams(); const locale=useAppStore(s=>s.locale); const fa=locale==='fa'; const [product,setProduct]=useState<CatalogProduct|null>(null); const [loading,setLoading]=useState(true); const [variant,setVariant]=useState<ProductVariant>(); const [qty,setQty]=useState(1); const add=useCartStore(s=>s.add); const compareHas=useCompareStore(s=>s.has); const compareToggle=useCompareStore(s=>s.toggle); const wished=useWishlistStore(s=>s.has(product?.id||'')); const toggle=useWishlistStore(s=>s.toggle); const recent=useRecentStore(s=>s.ids); const addRecent=useRecentStore(s=>s.add); const nav=useNavigate();
- useEffect(()=>{let active=true;setLoading(true);void getProductBySlug(slug||'').then(p=>{if(active){setProduct(p);if(p){addRecent(p.id);void trackGrowthEvent('view_product',{productId:p.id,slug:p.slug})}}}).finally(()=>active&&setLoading(false));return()=>{active=false}},[slug,addRecent]);
- useEffect(()=>{if(product&&!variant&&product.variants.length){const v=product.variants.find(x=>x.isDefault&&x.stock>0)||product.variants.find(x=>x.stock>0)||product.variants[0];setVariant(v)}},[product,variant]);
- const seoJsonLd = useMemo(() => product ? ({ '@context':'https://schema.org', '@type':'Product', name:fa ? product.nameFa : product.nameEn || product.nameFa, sku:product.sku, description:fa ? product.descriptionFa : product.descriptionEn || product.descriptionFa, image:product.images.map(i=>i.url), brand:product.brand ? { '@type':'Brand', name:fa ? product.brand.nameFa : product.brand.nameEn || product.brand.nameFa } : undefined, offers:{ '@type':'Offer', priceCurrency:'IRR', price:Number(variant?.salePrice ?? variant?.price ?? product.salePrice ?? product.price), availability:(variant?.stock ?? product.stock) > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock', url:window.location.href } }) : undefined, [product,variant,fa]);
- usePageSeo({ title: product ? `${fa ? product.nameFa : product.nameEn || product.nameFa} | Mobilex` : 'محصول | Mobilex', description: product ? (fa ? product.descriptionFa || 'جزئیات محصول Mobilex.' : product.descriptionEn || product.descriptionFa || 'Mobilex product details.') : 'Mobilex product', path: product ? `/products/${product.slug}` : '/products', type: 'product' }, seoJsonLd);
- const basePrice=variant?.price ?? product?.price ?? 0; const salePrice=variant?.salePrice ?? product?.salePrice; const currentStock=variant?.stock ?? product?.stock ?? 0; const image=product?.images.find(i=>i.isMain)?.url||product?.images[0]?.url; const finalPrice=Number(salePrice&&salePrice<basePrice?salePrice:basePrice);
- const addCart=()=>{if(!product||currentStock<=0)return; void trackGrowthEvent('add_to_cart',{productId:product.id,variantId:variant?.id??null,quantity:qty}); add({cartKey:variant?`${product.id}:${variant.id}`:product.id,id:product.id,variantId:variant?.id||null,variantLabel:variant?.label||'',name_fa:product.nameFa,name_en:product.nameEn,slug:product.slug,price:finalPrice,compareAtPrice:basePrice,maxQuantity:Math.min(99, Math.max(1,currentStock)),image,quantity:qty});};
- const buyNow=()=>{addCart();nav('/cart')}; const share=async()=>{try{await navigator.share?.({title:product?.nameFa,text:product?.nameFa,url:window.location.href})}catch{await navigator.clipboard?.writeText(window.location.href)}};
- const related=useMemo(()=>getDemoProducts().filter(p=>p.id!==product?.id&&(p.category?.id===product?.category?.id||p.brand?.id===product?.brand?.id)).slice(0,4),[product]);
- if(loading)return <div className="mx-page"><div className="mx-shell mx-product-detail-skeleton"><Skeleton/><Skeleton/><Skeleton/><Skeleton/></div></div>;
- if(!product)return <div className="mx-page"><div className="mx-shell mx-not-found-product"><Badge tone="danger">404</Badge><h1>{fa?'محصول پیدا نشد':'Product not found'}</h1><Link to="/products"><Button iconAfter={<ArrowLeft size={16} />}>{fa?'بازگشت به محصولات':'Back to products'}</Button></Link></div></div>;
- const name=fa?product.nameFa:product.nameEn||product.nameFa; const description=fa?product.descriptionFa:product.descriptionEn||product.descriptionFa;
- return <div className="mx-page mx-product-page"><div className="mx-shell"><div className="mx-breadcrumb"><Link to="/">خانه</Link><span>›</span><Link to="/products">محصولات</Link><span>›</span><strong>{name}</strong></div><div className="mx-product-detail-grid"><section><ProductGallery images={product.images} name={name}/></section><section className="mx-product-buy-box"><div className="mx-product-detail-brand">{fa?product.brand?.nameFa:product.brand?.nameEn||product.brand?.nameFa}</div><h1>{name}</h1><div className="mx-product-detail-rating"><RatingStars value={product.review.rating} count={product.review.count}/><Badge tone={product.isNew?'info':'success'} dot>{product.isNew?(fa?'جدید':'New'):(fa?'پرفروش':'Popular')}</Badge></div><p className="mx-product-description">{description|| (fa?'جزئیات کامل، دقیق و آماده برای انتخاب آگاهانه.':'Detailed product information for confident buying.')}</p><div className="mx-price-panel"><PriceDisplay price={basePrice} salePrice={salePrice} size="xl"/><span className={currentStock<=0?'out':currentStock<=3?'low':'ok'}>{currentStock<=0?(fa?'ناموجود':'Out of stock'):currentStock<=3?(fa?`تنها ${currentStock} عدد باقی مانده`:`Only ${currentStock} left`):(fa?'موجود در انبار':'In stock')}</span></div>{product.variants.length>0&&<VariantSelector variants={product.variants} locale={locale} onChange={setVariant}/>}<div className="mx-qty-buy"><div className="mx-qty"><button onClick={()=>setQty(x=>Math.max(1,x-1))}>−</button><strong>{qty}</strong><button onClick={()=>setQty(x=>Math.min(Math.max(1,currentStock),x+1))}>+</button></div><Button size="lg" fullWidth disabled={currentStock<=0} onClick={addCart} icon={<ShoppingCart size={18}/>} >{fa?'افزودن به سبد':'Add to cart'}</Button></div><div className="mx-buy-secondary"><Button variant="outline" fullWidth disabled={currentStock<=0} onClick={buyNow} icon={<Zap size={16}/>}>{fa?'خرید فوری':'Buy now'}</Button><Button variant={wished?'danger':'outline'} onClick={()=>{void trackGrowthEvent('wishlist',{productId:product.id,action:wished?'remove':'add'});void toggle(product.id)}} icon={<Heart size={16} fill={wished?'currentColor':'none'}/>} aria-label="Wishlist">{wished?(fa?'ذخیره شده':'Saved'):(fa?'علاقه‌مندی':'Wishlist')}</Button><Button variant="glass" onClick={share} icon={<Share2 size={16}/>}>{fa?'اشتراک':'Share'}</Button><Button variant={compareHas(product.id)?'soft':'outline'} onClick={()=>{void trackGrowthEvent('compare',{productId:product.id,action:compareHas(product.id)?'remove':'add'});void compareToggle(product.id)}} icon={<GitCompareArrows size={16}/>}>{compareHas(product.id)?(fa?'در مقایسه':'In compare'):(fa?'مقایسه':'Compare')}</Button></div><div className="mx-trust-grid"><div><ShieldCheck size={17}/><span>{fa?'ضمانت اصالت':'Authenticity'}</span></div><div><Truck size={17}/><span>{fa?'ارسال سریع':'Fast shipping'}</span></div><div><Check size={17}/><span>{fa?'بازگشت ۷ روزه':'7-day returns'}</span></div></div></section></div><section className="mx-product-information"><Tabs items={[{key:'overview',label:fa?'نمای کلی':'Overview',content:<div className="mx-info-grid"><article><h3>{fa?'توضیحات':'Description'}</h3><p>{description||'—'}</p></article><article><h3>{fa?'مشخصات فنی':'Specifications'}</h3><dl>{Object.entries(product.specs||{}).map(([k,v])=><div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl></article></div>},{key:'reviews',label:fa?'نظرات':'Reviews',content:<ProductReviews productId={product.id}/>},{key:'shipping',label:fa?'ارسال و بازگشت':'Shipping & returns',content:<div className="mx-service-panels"><Card><Truck size={20}/><strong>{fa?'ارسال سریع':'Fast delivery'}</strong><p>{fa?'زمان‌بندی ارسال در مرحله Checkout بر اساس مقصد محاسبه می‌شود.':'Shipping estimates are calculated at checkout.'}</p></Card><Card><ShieldCheck size={20}/><strong>{fa?'بازگشت ۷ روزه':'7-day returns'}</strong><p>{fa?'شرایط بازگشت طبق سیاست فروشگاه اعمال می‌شود.':'Returns follow the store policy.'}</p></Card></div>}]} /></section><section className="mx-section-inline"><div className="mx-shell"><div className="mx-kicker">COMMUNITY</div><h2 style={{margin:'5px 0 14px',fontSize:22}}>{fa?'پرسش و پاسخ':'Questions & Answers'}</h2><ProductQuestions productId={product.id}/></div></section><SmartDiscovery/>{related.length>0&&<section className="mx-section-inline"><div className="mx-shell"><SectionHeading eyebrow="YOU MAY ALSO LIKE" title={fa?'محصولات مشابه':'You may also like'}/><ProductGrid products={related}/></div></section>}</div></div>
+export function ProductDetailsPage() {
+  const { slug } = useParams();
+  const locale = useAppStore((s) => s.locale);
+  const fa = locale === 'fa';
+  const [product, setProduct] = useState<CatalogProduct | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [variant, setVariant] = useState<ProductVariant>();
+  const [qty, setQty] = useState(1);
+  const add = useCartStore((s) => s.add);
+  const compareHas = useCompareStore((s) => s.has);
+  const compareToggle = useCompareStore((s) => s.toggle);
+  const wished = useWishlistStore((s) => s.has(product?.id || ''));
+  const toggle = useWishlistStore((s) => s.toggle);
+  const recent = useRecentStore((s) => s.ids);
+  const addRecent = useRecentStore((s) => s.add);
+  const nav = useNavigate();
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    void getProductBySlug(slug || '')
+      .then((p) => {
+        if (active) {
+          setProduct(p);
+          if (p) {
+            addRecent(p.id);
+            void trackGrowthEvent('view_product', { productId: p.id, slug: p.slug });
+          }
+        }
+      })
+      .finally(() => active && setLoading(false));
+    return () => {
+      active = false;
+    };
+  }, [slug, addRecent]);
+  useEffect(() => {
+    if (product && !variant && product.variants.length) {
+      const v =
+        product.variants.find((x) => x.isDefault && x.stock > 0) ||
+        product.variants.find((x) => x.stock > 0) ||
+        product.variants[0];
+      setVariant(v);
+    }
+  }, [product, variant]);
+  const seoJsonLd = useMemo(
+    () =>
+      product
+        ? {
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: fa ? product.nameFa : product.nameEn || product.nameFa,
+            sku: product.sku,
+            description: fa ? product.descriptionFa : product.descriptionEn || product.descriptionFa,
+            image: product.images.map((i) => i.url),
+            brand: product.brand
+              ? {
+                  '@type': 'Brand',
+                  name: fa ? product.brand.nameFa : product.brand.nameEn || product.brand.nameFa,
+                }
+              : undefined,
+            offers: {
+              '@type': 'Offer',
+              priceCurrency: 'IRR',
+              price: Number(variant?.salePrice ?? variant?.price ?? product.salePrice ?? product.price),
+              availability:
+                (variant?.stock ?? product.stock) > 0
+                  ? 'https://schema.org/InStock'
+                  : 'https://schema.org/OutOfStock',
+              url: window.location.href,
+            },
+          }
+        : undefined,
+    [product, variant, fa],
+  );
+  usePageSeo(
+    {
+      title: product
+        ? `${fa ? product.nameFa : product.nameEn || product.nameFa} | Mobilex`
+        : 'محصول | Mobilex',
+      description: product
+        ? fa
+          ? product.descriptionFa || 'جزئیات محصول Mobilex.'
+          : product.descriptionEn || product.descriptionFa || 'Mobilex product details.'
+        : 'Mobilex product',
+      path: product ? `/products/${product.slug}` : '/products',
+      type: 'product',
+    },
+    seoJsonLd,
+  );
+  const basePrice = variant?.price ?? product?.price ?? 0;
+  const salePrice = variant?.salePrice ?? product?.salePrice;
+  const currentStock = variant?.stock ?? product?.stock ?? 0;
+  const image = product?.images.find((i) => i.isMain)?.url || product?.images[0]?.url;
+  const finalPrice = Number(salePrice && salePrice < basePrice ? salePrice : basePrice);
+  const addCart = () => {
+    if (!product || currentStock <= 0) return;
+    void trackGrowthEvent('add_to_cart', {
+      productId: product.id,
+      variantId: variant?.id ?? null,
+      quantity: qty,
+    });
+    add({
+      cartKey: variant ? `${product.id}:${variant.id}` : product.id,
+      id: product.id,
+      variantId: variant?.id || null,
+      variantLabel: variant?.label || '',
+      name_fa: product.nameFa,
+      name_en: product.nameEn,
+      slug: product.slug,
+      price: finalPrice,
+      compareAtPrice: basePrice,
+      maxQuantity: Math.min(99, Math.max(1, currentStock)),
+      image,
+      quantity: qty,
+    });
+  };
+  const buyNow = () => {
+    addCart();
+    nav('/cart');
+  };
+  const share = async () => {
+    try {
+      await navigator.share?.({ title: product?.nameFa, text: product?.nameFa, url: window.location.href });
+    } catch {
+      await navigator.clipboard?.writeText(window.location.href);
+    }
+  };
+  const related = useMemo(
+    () =>
+      getDemoProducts()
+        .filter(
+          (p) =>
+            p.id !== product?.id &&
+            (p.category?.id === product?.category?.id || p.brand?.id === product?.brand?.id),
+        )
+        .slice(0, 4),
+    [product],
+  );
+  if (loading)
+    return (
+      <div className="mx-page">
+        <div className="mx-shell mx-product-detail-skeleton">
+          <Skeleton />
+          <Skeleton />
+          <Skeleton />
+          <Skeleton />
+        </div>
+      </div>
+    );
+  if (!product)
+    return (
+      <div className="mx-page">
+        <div className="mx-shell mx-not-found-product">
+          <Badge tone="danger">404</Badge>
+          <h1>{fa ? 'محصول پیدا نشد' : 'Product not found'}</h1>
+          <Link to="/products">
+            <Button iconAfter={<ArrowLeft size={16} />}>
+              {fa ? 'بازگشت به محصولات' : 'Back to products'}
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  const name = fa ? product.nameFa : product.nameEn || product.nameFa;
+  const description = fa ? product.descriptionFa : product.descriptionEn || product.descriptionFa;
+  return (
+    <div className="mx-page mx-product-page">
+      <div className="mx-shell">
+        <div className="mx-breadcrumb">
+          <Link to="/">خانه</Link>
+          <span>›</span>
+          <Link to="/products">محصولات</Link>
+          <span>›</span>
+          <strong>{name}</strong>
+        </div>
+        <div className="mx-product-detail-grid">
+          <section>
+            <ProductGallery images={product.images} name={name} />
+          </section>
+          <section className="mx-product-buy-box">
+            <div className="mx-product-detail-brand">
+              {fa ? product.brand?.nameFa : product.brand?.nameEn || product.brand?.nameFa}
+            </div>
+            <h1>{name}</h1>
+            <div className="mx-product-detail-rating">
+              <RatingStars value={product.review.rating} count={product.review.count} />
+              <Badge tone={product.isNew ? 'info' : 'success'} dot>
+                {product.isNew ? (fa ? 'جدید' : 'New') : fa ? 'پرفروش' : 'Popular'}
+              </Badge>
+            </div>
+            <p className="mx-product-description">
+              {description ||
+                (fa
+                  ? 'جزئیات کامل، دقیق و آماده برای انتخاب آگاهانه.'
+                  : 'Detailed product information for confident buying.')}
+            </p>
+            <div className="mx-price-panel">
+              <PriceDisplay price={basePrice} salePrice={salePrice} size="xl" />
+              <span className={currentStock <= 0 ? 'out' : currentStock <= 3 ? 'low' : 'ok'}>
+                {currentStock <= 0
+                  ? fa
+                    ? 'ناموجود'
+                    : 'Out of stock'
+                  : currentStock <= 3
+                    ? fa
+                      ? `تنها ${currentStock} عدد باقی مانده`
+                      : `Only ${currentStock} left`
+                    : fa
+                      ? 'موجود در انبار'
+                      : 'In stock'}
+              </span>
+            </div>
+            {product.variants.length > 0 && (
+              <VariantSelector variants={product.variants} locale={locale} onChange={setVariant} />
+            )}
+            <div className="mx-qty-buy">
+              <div className="mx-qty">
+                <button onClick={() => setQty((x) => Math.max(1, x - 1))}>−</button>
+                <strong>{qty}</strong>
+                <button onClick={() => setQty((x) => Math.min(Math.max(1, currentStock), x + 1))}>+</button>
+              </div>
+              <Button
+                size="lg"
+                fullWidth
+                disabled={currentStock <= 0}
+                onClick={addCart}
+                icon={<ShoppingCart size={18} />}
+              >
+                {fa ? 'افزودن به سبد' : 'Add to cart'}
+              </Button>
+            </div>
+            <div className="mx-buy-secondary">
+              <Button
+                variant="outline"
+                fullWidth
+                disabled={currentStock <= 0}
+                onClick={buyNow}
+                icon={<Zap size={16} />}
+              >
+                {fa ? 'خرید فوری' : 'Buy now'}
+              </Button>
+              <Button
+                variant={wished ? 'danger' : 'outline'}
+                onClick={() => {
+                  void trackGrowthEvent('wishlist', {
+                    productId: product.id,
+                    action: wished ? 'remove' : 'add',
+                  });
+                  void toggle(product.id);
+                }}
+                icon={<Heart size={16} fill={wished ? 'currentColor' : 'none'} />}
+                aria-label="Wishlist"
+              >
+                {wished ? (fa ? 'ذخیره شده' : 'Saved') : fa ? 'علاقه‌مندی' : 'Wishlist'}
+              </Button>
+              <Button variant="glass" onClick={share} icon={<Share2 size={16} />}>
+                {fa ? 'اشتراک' : 'Share'}
+              </Button>
+              <Button
+                variant={compareHas(product.id) ? 'soft' : 'outline'}
+                onClick={() => {
+                  void trackGrowthEvent('compare', {
+                    productId: product.id,
+                    action: compareHas(product.id) ? 'remove' : 'add',
+                  });
+                  void compareToggle(product.id);
+                }}
+                icon={<GitCompareArrows size={16} />}
+              >
+                {compareHas(product.id) ? (fa ? 'در مقایسه' : 'In compare') : fa ? 'مقایسه' : 'Compare'}
+              </Button>
+            </div>
+            <div className="mx-trust-grid">
+              <div>
+                <ShieldCheck size={17} />
+                <span>{fa ? 'ضمانت اصالت' : 'Authenticity'}</span>
+              </div>
+              <div>
+                <Truck size={17} />
+                <span>{fa ? 'ارسال سریع' : 'Fast shipping'}</span>
+              </div>
+              <div>
+                <Check size={17} />
+                <span>{fa ? 'بازگشت ۷ روزه' : '7-day returns'}</span>
+              </div>
+            </div>
+          </section>
+        </div>
+        <section className="mx-product-information">
+          <Tabs
+            items={[
+              {
+                key: 'overview',
+                label: fa ? 'نمای کلی' : 'Overview',
+                content: (
+                  <div className="mx-info-grid">
+                    <article>
+                      <h3>{fa ? 'توضیحات' : 'Description'}</h3>
+                      <p>{description || '—'}</p>
+                    </article>
+                    <article>
+                      <h3>{fa ? 'مشخصات فنی' : 'Specifications'}</h3>
+                      <dl>
+                        {Object.entries(product.specs || {}).map(([k, v]) => (
+                          <div key={k}>
+                            <dt>{k}</dt>
+                            <dd>{v}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </article>
+                  </div>
+                ),
+              },
+              {
+                key: 'reviews',
+                label: fa ? 'نظرات' : 'Reviews',
+                content: <ProductReviews productId={product.id} />,
+              },
+              {
+                key: 'shipping',
+                label: fa ? 'ارسال و بازگشت' : 'Shipping & returns',
+                content: (
+                  <div className="mx-service-panels">
+                    <Card>
+                      <Truck size={20} />
+                      <strong>{fa ? 'ارسال سریع' : 'Fast delivery'}</strong>
+                      <p>
+                        {fa
+                          ? 'زمان‌بندی ارسال در مرحله Checkout بر اساس مقصد محاسبه می‌شود.'
+                          : 'Shipping estimates are calculated at checkout.'}
+                      </p>
+                    </Card>
+                    <Card>
+                      <ShieldCheck size={20} />
+                      <strong>{fa ? 'بازگشت ۷ روزه' : '7-day returns'}</strong>
+                      <p>
+                        {fa
+                          ? 'شرایط بازگشت طبق سیاست فروشگاه اعمال می‌شود.'
+                          : 'Returns follow the store policy.'}
+                      </p>
+                    </Card>
+                  </div>
+                ),
+              },
+            ]}
+          />
+        </section>
+        <section className="mx-section-inline">
+          <div className="mx-shell">
+            <div className="mx-kicker">COMMUNITY</div>
+            <h2 style={{ margin: '5px 0 14px', fontSize: 22 }}>
+              {fa ? 'پرسش و پاسخ' : 'Questions & Answers'}
+            </h2>
+            <ProductQuestions productId={product.id} />
+          </div>
+        </section>
+        <SmartDiscovery />
+        {related.length > 0 && (
+          <section className="mx-section-inline">
+            <div className="mx-shell">
+              <SectionHeading
+                eyebrow="YOU MAY ALSO LIKE"
+                title={fa ? 'محصولات مشابه' : 'You may also like'}
+              />
+              <ProductGrid products={related} />
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
+  );
 }

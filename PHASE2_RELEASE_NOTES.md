@@ -3,6 +3,7 @@
 Phase 2 upgrades the Phase 1 foundation into a reusable design system and app chrome.
 
 ## Major additions
+
 - Premium responsive Storefront shell
 - Desktop + mobile navigation
 - Design token system
@@ -16,4 +17,5 @@ Phase 2 upgrades the Phase 1 foundation into a reusable design system and app ch
 - UI component barrel exports
 
 ## Validation limitation
+
 Dependency installation was unavailable in the build environment, so package-level typecheck/build could not be truthfully reported as successful. Local imports were statically audited and the foundation validator parses successfully.

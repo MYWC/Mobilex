@@ -6,8 +6,224 @@ import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Badge } from '@/components/ui/Badge';
 import { useAppStore } from '@/stores/useAppStore';
-import { createTicket, getTicket, listMyTickets, sendTicketMessage, supportStatusLabel } from '@/features/support/support.service';
+import {
+  createTicket,
+  getTicket,
+  listMyTickets,
+  sendTicketMessage,
+  supportStatusLabel,
+} from '@/features/support/support.service';
 import type { SupportMessage, SupportTicket, TicketPriority } from '@/features/support/support.types';
 import { trackGrowthEvent } from '@/features/recommendations/growth.events';
 
-export function SupportPage(){const fa=useAppStore(s=>s.locale==='fa');const [tickets,setTickets]=useState<SupportTicket[]>([]);const [active,setActive]=useState<SupportTicket|null>(null);const [messages,setMessages]=useState<SupportMessage[]>([]);const [newBody,setNewBody]=useState('');const [showNew,setShowNew]=useState(false);const [form,setForm]=useState({subject:'',category:'general',priority:'normal' as TicketPriority,body:''});const [busy,setBusy]=useState(false);useEffect(()=>{void listMyTickets().then(setTickets)},[]);const openTicket=async(t:SupportTicket)=>{setActive(t);const detail=await getTicket(t.id);setMessages(detail?.messages??[])};const submit=async()=>{if(!form.subject.trim()||!form.body.trim())return;setBusy(true);try{const t=await createTicket(form);void trackGrowthEvent('support_create',{ticketId:t.id,category:form.category,priority:form.priority});setTickets(x=>[t,...x]);setShowNew(false);setForm({subject:'',category:'general',priority:'normal',body:''});await openTicket(t)}finally{setBusy(false)}};const send=async()=>{if(!active||!newBody.trim())return;setBusy(true);try{const m=await sendTicketMessage(active.id,newBody);setMessages(x=>[...x,m]);setNewBody('')}finally{setBusy(false)}};return <div className="mx-page"><div className="mx-shell"><div className="mx-page-heading-row"><div><div className="mx-kicker">CUSTOMER CARE</div><h1>{fa?'پشتیبانی Mobilex':'Mobilex Support'}</h1><p>{fa?'تیکت بساز، پاسخ‌ها را دنبال کن و تمام گفتگو را یکجا داشته باش.':'Create tickets, track replies, and keep every conversation in one place.'}</p></div><Button onClick={()=>setShowNew(true)} icon={<Plus size={16}/>}>{fa?'تیکت جدید':'New ticket'}</Button></div><div className="mx-support-grid"><Card className="mx-support-list"><div className="mx-card-headline"><h2>{fa?'تیکت‌های من':'My tickets'}</h2><Badge tone="primary">{tickets.length}</Badge></div>{tickets.length?tickets.map(t=><button key={t.id} className={`mx-ticket-row ${active?.id===t.id?'active':''}`} onClick={()=>void openTicket(t)}><div><strong>{t.subject}</strong><span>{t.ticketNumber}</span></div><Badge tone={t.status==='resolved'?'success':t.status==='open'?'info':'warning'}>{supportStatusLabel(t.status,fa)}</Badge></button>):<div className="mx-support-empty"><LifeBuoy size={28}/><p>{fa?'هنوز تیکتی ندارید.':'No tickets yet.'}</p></div>}</Card><Card className="mx-support-chat">{active?<><div className="mx-card-headline"><div><h2>{active.subject}</h2><span>{active.ticketNumber}</span></div><Badge tone={active.status==='resolved'?'success':'info'}>{supportStatusLabel(active.status,fa)}</Badge></div><div className="mx-chat-feed">{messages.map(m=><div className={`mx-chat-bubble ${m.senderType}`} key={m.id}><p>{m.body}</p><time>{new Date(m.createdAt).toLocaleString(fa?'fa-IR':'en-US')}</time></div>)}</div><div className="mx-chat-compose"><textarea value={newBody} onChange={e=>setNewBody(e.target.value)} placeholder={fa?'پیام خود را بنویسید…':'Write a message…'}/><Button loading={busy} onClick={()=>void send()} icon={<Send size={15}/>}>{fa?'ارسال':'Send'}</Button></div></>:<div className="mx-support-placeholder"><MessageCircle size={38}/><h2>{fa?'یک تیکت انتخاب کنید':'Choose a ticket'}</h2><p>{fa?'برای دیدن گفتگو، یکی از تیکت‌های سمت چپ را انتخاب کنید.':'Select a ticket to view the conversation.'}</p></div>}</Card></div><Card className="mx-support-trust"><ShieldCheck size={20}/><div><strong>{fa?'پشتیبانی ساخت‌یافته':'Structured support'}</strong><span>{fa?'هر تیکت شناسه، وضعیت، اولویت و تاریخچه پیام دارد.':'Every ticket has an id, status, priority, and message history.'}</span></div></Card></div><div className={`mx-modal-overlay ${showNew?'open':''}`} onClick={()=>setShowNew(false)}><div className="mx-modal-card" onClick={e=>e.stopPropagation()}><div className="mx-card-headline"><div><div className="mx-kicker">NEW REQUEST</div><h2>{fa?'تیکت جدید':'New support ticket'}</h2></div></div><div className="mx-form-grid"><Input label={fa?'موضوع':'Subject'} value={form.subject} onChange={e=>setForm(x=>({...x,subject:e.target.value}))}/><Select label={fa?'دسته':'Category'} value={form.category} onChange={e=>setForm(x=>({...x,category:e.target.value}))} options={[{label:fa?'عمومی':'General',value:'general'},{label:fa?'محصول':'Product',value:'product'},{label:fa?'سفارش':'Order',value:'order'},{label:fa?'پرداخت':'Payment',value:'payment'}]}/><Select label={fa?'اولویت':'Priority'} value={form.priority} onChange={e=>setForm(x=>({...x,priority:e.target.value as TicketPriority}))} options={[{label:fa?'کم':'Low',value:'low'},{label:fa?'عادی':'Normal',value:'normal'},{label:fa?'بالا':'High',value:'high'},{label:fa?'فوری':'Urgent',value:'urgent'}]}/><textarea className="mx-textarea" value={form.body} onChange={e=>setForm(x=>({...x,body:e.target.value}))} placeholder={fa?'شرح درخواست…':'Describe your request…'}/></div><div className="mx-modal-actions"><Button variant="outline" onClick={()=>setShowNew(false)}>{fa?'انصراف':'Cancel'}</Button><Button loading={busy} onClick={()=>void submit()}>{fa?'ثبت تیکت':'Create ticket'}</Button></div></div></div></div>}
+export function SupportPage() {
+  const fa = useAppStore((s) => s.locale === 'fa');
+  const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [active, setActive] = useState<SupportTicket | null>(null);
+  const [messages, setMessages] = useState<SupportMessage[]>([]);
+  const [newBody, setNewBody] = useState('');
+  const [showNew, setShowNew] = useState(false);
+  const [form, setForm] = useState({
+    subject: '',
+    category: 'general',
+    priority: 'normal' as TicketPriority,
+    body: '',
+  });
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    void listMyTickets().then(setTickets);
+  }, []);
+  const openTicket = async (t: SupportTicket) => {
+    setActive(t);
+    const detail = await getTicket(t.id);
+    setMessages(detail?.messages ?? []);
+  };
+  const submit = async () => {
+    if (!form.subject.trim() || !form.body.trim()) return;
+    setBusy(true);
+    try {
+      const t = await createTicket(form);
+      void trackGrowthEvent('support_create', {
+        ticketId: t.id,
+        category: form.category,
+        priority: form.priority,
+      });
+      setTickets((x) => [t, ...x]);
+      setShowNew(false);
+      setForm({ subject: '', category: 'general', priority: 'normal', body: '' });
+      await openTicket(t);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const send = async () => {
+    if (!active || !newBody.trim()) return;
+    setBusy(true);
+    try {
+      const m = await sendTicketMessage(active.id, newBody);
+      setMessages((x) => [...x, m]);
+      setNewBody('');
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="mx-page">
+      <div className="mx-shell">
+        <div className="mx-page-heading-row">
+          <div>
+            <div className="mx-kicker">CUSTOMER CARE</div>
+            <h1>{fa ? 'پشتیبانی Mobilex' : 'Mobilex Support'}</h1>
+            <p>
+              {fa
+                ? 'تیکت بساز، پاسخ‌ها را دنبال کن و تمام گفتگو را یکجا داشته باش.'
+                : 'Create tickets, track replies, and keep every conversation in one place.'}
+            </p>
+          </div>
+          <Button onClick={() => setShowNew(true)} icon={<Plus size={16} />}>
+            {fa ? 'تیکت جدید' : 'New ticket'}
+          </Button>
+        </div>
+        <div className="mx-support-grid">
+          <Card className="mx-support-list">
+            <div className="mx-card-headline">
+              <h2>{fa ? 'تیکت‌های من' : 'My tickets'}</h2>
+              <Badge tone="primary">{tickets.length}</Badge>
+            </div>
+            {tickets.length ? (
+              tickets.map((t) => (
+                <button
+                  key={t.id}
+                  className={`mx-ticket-row ${active?.id === t.id ? 'active' : ''}`}
+                  onClick={() => void openTicket(t)}
+                >
+                  <div>
+                    <strong>{t.subject}</strong>
+                    <span>{t.ticketNumber}</span>
+                  </div>
+                  <Badge
+                    tone={t.status === 'resolved' ? 'success' : t.status === 'open' ? 'info' : 'warning'}
+                  >
+                    {supportStatusLabel(t.status, fa)}
+                  </Badge>
+                </button>
+              ))
+            ) : (
+              <div className="mx-support-empty">
+                <LifeBuoy size={28} />
+                <p>{fa ? 'هنوز تیکتی ندارید.' : 'No tickets yet.'}</p>
+              </div>
+            )}
+          </Card>
+          <Card className="mx-support-chat">
+            {active ? (
+              <>
+                <div className="mx-card-headline">
+                  <div>
+                    <h2>{active.subject}</h2>
+                    <span>{active.ticketNumber}</span>
+                  </div>
+                  <Badge tone={active.status === 'resolved' ? 'success' : 'info'}>
+                    {supportStatusLabel(active.status, fa)}
+                  </Badge>
+                </div>
+                <div className="mx-chat-feed">
+                  {messages.map((m) => (
+                    <div className={`mx-chat-bubble ${m.senderType}`} key={m.id}>
+                      <p>{m.body}</p>
+                      <time>{new Date(m.createdAt).toLocaleString(fa ? 'fa-IR' : 'en-US')}</time>
+                    </div>
+                  ))}
+                </div>
+                <div className="mx-chat-compose">
+                  <textarea
+                    value={newBody}
+                    onChange={(e) => setNewBody(e.target.value)}
+                    placeholder={fa ? 'پیام خود را بنویسید…' : 'Write a message…'}
+                  />
+                  <Button loading={busy} onClick={() => void send()} icon={<Send size={15} />}>
+                    {fa ? 'ارسال' : 'Send'}
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="mx-support-placeholder">
+                <MessageCircle size={38} />
+                <h2>{fa ? 'یک تیکت انتخاب کنید' : 'Choose a ticket'}</h2>
+                <p>
+                  {fa
+                    ? 'برای دیدن گفتگو، یکی از تیکت‌های سمت چپ را انتخاب کنید.'
+                    : 'Select a ticket to view the conversation.'}
+                </p>
+              </div>
+            )}
+          </Card>
+        </div>
+        <Card className="mx-support-trust">
+          <ShieldCheck size={20} />
+          <div>
+            <strong>{fa ? 'پشتیبانی ساخت‌یافته' : 'Structured support'}</strong>
+            <span>
+              {fa
+                ? 'هر تیکت شناسه، وضعیت، اولویت و تاریخچه پیام دارد.'
+                : 'Every ticket has an id, status, priority, and message history.'}
+            </span>
+          </div>
+        </Card>
+      </div>
+      <div className={`mx-modal-overlay ${showNew ? 'open' : ''}`} onClick={() => setShowNew(false)}>
+        <div className="mx-modal-card" onClick={(e) => e.stopPropagation()}>
+          <div className="mx-card-headline">
+            <div>
+              <div className="mx-kicker">NEW REQUEST</div>
+              <h2>{fa ? 'تیکت جدید' : 'New support ticket'}</h2>
+            </div>
+          </div>
+          <div className="mx-form-grid">
+            <Input
+              label={fa ? 'موضوع' : 'Subject'}
+              value={form.subject}
+              onChange={(e) => setForm((x) => ({ ...x, subject: e.target.value }))}
+            />
+            <Select
+              label={fa ? 'دسته' : 'Category'}
+              value={form.category}
+              onChange={(e) => setForm((x) => ({ ...x, category: e.target.value }))}
+              options={[
+                { label: fa ? 'عمومی' : 'General', value: 'general' },
+                { label: fa ? 'محصول' : 'Product', value: 'product' },
+                { label: fa ? 'سفارش' : 'Order', value: 'order' },
+                { label: fa ? 'پرداخت' : 'Payment', value: 'payment' },
+              ]}
+            />
+            <Select
+              label={fa ? 'اولویت' : 'Priority'}
+              value={form.priority}
+              onChange={(e) => setForm((x) => ({ ...x, priority: e.target.value as TicketPriority }))}
+              options={[
+                { label: fa ? 'کم' : 'Low', value: 'low' },
+                { label: fa ? 'عادی' : 'Normal', value: 'normal' },
+                { label: fa ? 'بالا' : 'High', value: 'high' },
+                { label: fa ? 'فوری' : 'Urgent', value: 'urgent' },
+              ]}
+            />
+            <textarea
+              className="mx-textarea"
+              value={form.body}
+              onChange={(e) => setForm((x) => ({ ...x, body: e.target.value }))}
+              placeholder={fa ? 'شرح درخواست…' : 'Describe your request…'}
+            />
+          </div>
+          <div className="mx-modal-actions">
+            <Button variant="outline" onClick={() => setShowNew(false)}>
+              {fa ? 'انصراف' : 'Cancel'}
+            </Button>
+            <Button loading={busy} onClick={() => void submit()}>
+              {fa ? 'ثبت تیکت' : 'Create ticket'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

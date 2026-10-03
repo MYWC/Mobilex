@@ -1,6 +1,8 @@
 import type { Locale } from '@/types/core';
 
-function localeCode(locale: Locale): string { return locale === 'fa' ? 'fa-IR' : 'en-US'; }
+function localeCode(locale: Locale): string {
+  return locale === 'fa' ? 'fa-IR' : 'en-US';
+}
 
 export function formatNumber(value: number, locale: Locale): string {
   return new Intl.NumberFormat(localeCode(locale)).format(value);
@@ -12,7 +14,9 @@ export function formatToman(value: number, locale: Locale): string {
 }
 
 export function formatPercent(value: number, locale: Locale): string {
-  return new Intl.NumberFormat(localeCode(locale), { style: 'percent', maximumFractionDigits: 0 }).format(value);
+  return new Intl.NumberFormat(localeCode(locale), { style: 'percent', maximumFractionDigits: 0 }).format(
+    value,
+  );
 }
 export function formatCurrency(value: number, locale: Locale): string {
   return formatToman(value, locale);

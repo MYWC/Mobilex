@@ -3,6 +3,7 @@
 Phase 2 builds the visual engine on top of Phase 1 Hardened.
 
 ## Included
+
 - Design tokens for light/dark themes
 - Global CSS engine with responsive layout primitives
 - Glass, gradient, glow and elevation surfaces
@@ -15,6 +16,7 @@ Phase 2 builds the visual engine on top of Phase 1 Hardened.
 - Reworked Home Page as the design-system showcase
 
 ## Validation
+
 Run after dependency installation:
 
 ```bash
@@ -26,6 +28,7 @@ npm run build
 ```
 
 ## Next phase
+
 Phase 3 should consume these components instead of adding one-off UI patterns.
 
 - Advanced surfaces: SpotlightCard, Avatar, Progress, Accordion, EmptyState

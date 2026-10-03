@@ -3,6 +3,7 @@
 ## Account & Customer Experience
 
 Phase 5 adds the customer account layer on top of Phase 4 Commerce:
+
 - Account Center and statistics
 - Address Book
 - Security and password recovery

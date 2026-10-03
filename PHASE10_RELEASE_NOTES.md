@@ -1,6 +1,7 @@
 # Mobilex 2.0 — Phase 10 Final Release
 
 ## Included
+
 - Final version contract: 2.0.0
 - Production demo-mode hard fail
 - Final release readiness center for administrators
@@ -18,6 +19,7 @@
 - Final .env.example contracts
 
 ## Verification performed in this build environment
+
 - Foundation preflight: PASS
 - Commerce preflight: PASS
 - Phase 5 validation: PASS
@@ -35,6 +37,7 @@
 - TypeScript parser produced no syntax diagnostics; full typecheck/build requires installed project dependencies.
 
 ## Live launch requirements
+
 1. Apply Supabase migrations 0004 through 0010 in order.
 2. Deploy the Edge Functions.
 3. Configure server-only payment secrets in Supabase Edge Functions.

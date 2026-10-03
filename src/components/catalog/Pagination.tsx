@@ -1,4 +1,40 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useCatalogStore } from '@/features/catalog/catalog.store';
-export function Pagination(){const page=useCatalogStore(s=>s.filters.page);const size=useCatalogStore(s=>s.filters.pageSize);const total=useCatalogStore(s=>s.total);const set=useCatalogStore(s=>s.setPage);const pages=Math.max(1,Math.ceil(total/size));if(pages<=1)return null;const list=Array.from({length:Math.min(7,pages)},(_,i)=>{if(pages<=7)return i+1;if(page<=4)return i+1;if(page>=pages-3)return pages-6+i;return page-3+i});return <nav className="mx-pagination" aria-label="Pagination"><Button variant="outline" size="sm" disabled={page<=1} onClick={()=>set(page-1)} icon={<ChevronRight size={15}/>}>قبلی</Button><div>{list.map(n=><button key={n} type="button" className={n===page?'is-active':''} onClick={()=>set(n)}>{n}</button>)}</div><Button variant="outline" size="sm" disabled={page>=pages} onClick={()=>set(page+1)}>بعدی <ChevronLeft size={15}/></Button></nav>}
+export function Pagination() {
+  const page = useCatalogStore((s) => s.filters.page);
+  const size = useCatalogStore((s) => s.filters.pageSize);
+  const total = useCatalogStore((s) => s.total);
+  const set = useCatalogStore((s) => s.setPage);
+  const pages = Math.max(1, Math.ceil(total / size));
+  if (pages <= 1) return null;
+  const list = Array.from({ length: Math.min(7, pages) }, (_, i) => {
+    if (pages <= 7) return i + 1;
+    if (page <= 4) return i + 1;
+    if (page >= pages - 3) return pages - 6 + i;
+    return page - 3 + i;
+  });
+  return (
+    <nav className="mx-pagination" aria-label="Pagination">
+      <Button
+        variant="outline"
+        size="sm"
+        disabled={page <= 1}
+        onClick={() => set(page - 1)}
+        icon={<ChevronRight size={15} />}
+      >
+        قبلی
+      </Button>
+      <div>
+        {list.map((n) => (
+          <button key={n} type="button" className={n === page ? 'is-active' : ''} onClick={() => set(n)}>
+            {n}
+          </button>
+        ))}
+      </div>
+      <Button variant="outline" size="sm" disabled={page >= pages} onClick={() => set(page + 1)}>
+        بعدی <ChevronLeft size={15} />
+      </Button>
+    </nav>
+  );
+}

@@ -34,7 +34,11 @@ export async function signInWithPassword(email: string, password: string): Promi
   return { user: data.user, session: data.session };
 }
 
-export async function registerWithPassword(email: string, password: string, data?: Record<string, unknown>): Promise<AuthSnapshot> {
+export async function registerWithPassword(
+  email: string,
+  password: string,
+  data?: Record<string, unknown>,
+): Promise<AuthSnapshot> {
   const client = requireSupabase();
   const { data: result, error } = await client.auth.signUp({ email, password, options: { data } });
   if (error) throw new AppError('AUTH_REQUIRED', error.message, { cause: error });
@@ -52,9 +56,6 @@ export async function logout(): Promise<void> {
 
 export async function sendPasswordReset(email: string, redirectTo?: string): Promise<void> {
   const client = requireSupabase();
-  const { error } = await client.auth.resetPasswordForEmail(
-    email,
-    redirectTo ? { redirectTo } : undefined
-  );
+  const { error } = await client.auth.resetPasswordForEmail(email, redirectTo ? { redirectTo } : undefined);
   if (error) throw new AppError('AUTH_REQUIRED', error.message, { cause: error });
 }

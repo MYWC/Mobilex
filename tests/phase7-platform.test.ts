@@ -15,8 +15,10 @@ describe('Phase 7 platform', () => {
     document.head.innerHTML = '';
     setSeo({ title: 'Mobilex', description: 'Storefront', path: '/products' });
     expect(document.title).toBe('Mobilex');
-    expect(document.head.querySelector('meta[name=description]')?.getAttribute('content')).toBe('Storefront');
-    expect(document.head.querySelector('meta[property=og:title]')?.getAttribute('content')).toBe('Mobilex');
-    expect(document.head.querySelector('link[rel=canonical]')?.getAttribute('href')).toContain('/products');
+    expect(document.head.querySelector('meta[name="description"]')?.getAttribute('content')).toBe(
+      'Storefront',
+    );
+    expect(document.head.querySelector('meta[property="og:title"]')?.getAttribute('content')).toBe('Mobilex');
+    expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toContain('/products');
   });
 });

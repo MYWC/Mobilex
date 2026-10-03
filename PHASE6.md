@@ -3,6 +3,7 @@
 Phase 6 introduces the Admin Control Center on top of the Phase 5 account/commerce foundation.
 
 ## Included
+
 - Independent admin shell with responsive sidebar/topbar.
 - Permission-aware admin navigation.
 - Operational dashboard with revenue trend, order funnel, recent orders, top products, and low-stock alerts.
@@ -19,9 +20,11 @@ Phase 6 introduces the Admin Control Center on top of the Phase 5 account/commer
 - Migration `0008_admin_control_center.sql` for audit, content, inventory ops, settings and server-side permission enforcement.
 
 ## Important
+
 The UI permission matrix is not the security boundary. Sensitive actions are enforced again in Supabase functions/RLS.
 Apply migration 0008 after the previous migrations.
 
 ## Quality
+
 `npm run validate` now includes the Phase 6 structural validator.
 When dependencies are installed, run `npm run quality` before production deployment.

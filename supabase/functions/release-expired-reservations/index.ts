@@ -5,7 +5,8 @@ serve(async (req) => {
   if (req.method !== 'POST') return new Response('Method Not Allowed', { status: 405 });
   const authorization = req.headers.get('Authorization') ?? '';
   const expected = Deno.env.get('CRON_SECRET');
-  if (!expected || authorization !== `Bearer ${expected}`) return new Response('Unauthorized', { status: 401 });
+  if (!expected || authorization !== `Bearer ${expected}`)
+    return new Response('Unauthorized', { status: 401 });
 
   try {
     const client = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);

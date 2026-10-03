@@ -15,12 +15,26 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export function Button({
-  variant = 'primary', size = 'md', loading = false, icon, iconAfter,
-  fullWidth = false, disabled, className, children, ...props
+  variant = 'primary',
+  size = 'md',
+  loading = false,
+  icon,
+  iconAfter,
+  fullWidth = false,
+  disabled,
+  className,
+  children,
+  ...props
 }: ButtonProps) {
   return (
     <button
-      className={cn('mx-button', `mx-button-${variant}`, `mx-button-${size}`, fullWidth && 'mx-button-full', className)}
+      className={cn(
+        'mx-button',
+        `mx-button-${variant}`,
+        `mx-button-${size}`,
+        fullWidth && 'mx-button-full',
+        className,
+      )}
       disabled={disabled || loading}
       {...props}
     >

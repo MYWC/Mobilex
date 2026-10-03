@@ -32,26 +32,35 @@ export async function listRemoteNotifications(userId: string, limit = 100): Prom
 
 export async function markRemoteNotificationRead(userId: string, notificationId: string): Promise<void> {
   if (!supabase) return;
-  const { error } = await supabase.from('notifications').update({ read_at: new Date().toISOString() }).eq('id', notificationId).eq('user_id', userId);
+  const { error } = await supabase
+    .from('notifications')
+    .update({ read_at: new Date().toISOString() })
+    .eq('id', notificationId)
+    .eq('user_id', userId);
   if (error) throw normalizeError(error);
 }
 
 export async function markAllRemoteNotificationsRead(userId: string): Promise<void> {
   if (!supabase) return;
-  const { error } = await supabase.from('notifications').update({ read_at: new Date().toISOString() }).eq('user_id', userId).is('read_at', null);
+  const { error } = await supabase
+    .from('notifications')
+    .update({ read_at: new Date().toISOString() })
+    .eq('user_id', userId)
+    .is('read_at', null);
   if (error) throw normalizeError(error);
 }
 
 export async function deleteRemoteNotification(userId: string, notificationId: string): Promise<void> {
   if (!supabase) return;
-  const { error } = await supabase.from('notifications').delete().eq('id', notificationId).eq('user_id', userId);
+  const { error } = await supabase
+    .from('notifications')
+    .delete()
+    .eq('id', notificationId)
+    .eq('user_id', userId);
   if (error) throw normalizeError(error);
 }
 
-export async function subscribeNotifications(
-  userId: string,
-  onChange: () => void
-): Promise<() => void> {
+export async function subscribeNotifications(userId: string, onChange: () => void): Promise<() => void> {
   const client = supabase;
 
   if (!client) return () => undefined;
@@ -66,7 +75,7 @@ export async function subscribeNotifications(
         table: 'notifications',
         filter: `user_id=eq.${userId}`,
       },
-      onChange
+      onChange,
     )
     .subscribe();
 

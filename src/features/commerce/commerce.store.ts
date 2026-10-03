@@ -3,7 +3,14 @@ import { z } from 'zod';
 import { readStorage, writeStorage } from '@/lib/storage/storage';
 import { COMMERCE, SHIPPING_OPTIONS } from './commerce.constants';
 import { checkoutDraftSchema } from './commerce.schema';
-import type { CheckoutDraft, CommerceAddress, CouponState, CheckoutStep, PaymentMethod, ShippingMethod } from './commerce.types';
+import type {
+  CheckoutDraft,
+  CommerceAddress,
+  CouponState,
+  CheckoutStep,
+  PaymentMethod,
+  ShippingMethod,
+} from './commerce.types';
 
 interface CommerceState {
   step: CheckoutStep;

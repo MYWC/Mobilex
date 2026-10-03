@@ -20,7 +20,11 @@ function normalizeLocal(list: CommerceAddress[]): CommerceAddress[] {
 export async function loadAddresses(): Promise<CommerceAddress[]> {
   const user = await getCurrentUser();
   if (user) {
-    try { return await listUserAddresses(user.id); } catch { /* fall back to local */ }
+    try {
+      return await listUserAddresses(user.id);
+    } catch {
+      /* fall back to local */
+    }
   }
   return normalizeLocal(readStorage<CommerceAddress[]>(KEY, []));
 }
@@ -30,7 +34,11 @@ export async function upsertAddress(address: CommerceAddress): Promise<CommerceA
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message || 'آدرس معتبر نیست.');
   const user = await getCurrentUser();
   if (user && import.meta.env.VITE_SUPABASE_URL) {
-    try { return await saveUserAddress(user.id, address); } catch { /* fall back to local */ }
+    try {
+      return await saveUserAddress(user.id, address);
+    } catch {
+      /* fall back to local */
+    }
   }
   const current = readStorage<CommerceAddress[]>(KEY, []);
   const id = address.id ?? crypto.randomUUID();
@@ -43,9 +51,15 @@ export async function upsertAddress(address: CommerceAddress): Promise<CommerceA
 export async function removeAddress(id: string): Promise<void> {
   const user = await getCurrentUser();
   if (user && import.meta.env.VITE_SUPABASE_URL) {
-    try { await deleteUserAddress(user.id, id); return; } catch { /* fallback */ }
+    try {
+      await deleteUserAddress(user.id, id);
+      return;
+    } catch {
+      /* fallback */
+    }
   }
   const next = normalizeLocal(readStorage<CommerceAddress[]>(KEY, []).filter((address) => address.id !== id));
-  if (next.length > 0 && !next.some((address) => address.isDefault)) next[0] = { ...next[0], isDefault: true };
+  if (next.length > 0 && !next.some((address) => address.isDefault))
+    next[0] = { ...next[0], isDefault: true };
   writeStorage(KEY, next);
 }

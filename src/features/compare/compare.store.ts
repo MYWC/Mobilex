@@ -19,7 +19,11 @@ interface CompareState {
   isFull: () => boolean;
 }
 
-const persist = (ids: string[]) => { const next = [...new Set(ids)].slice(0, 4); writeStorage(STORAGE_KEY, next); emit(EVENTS.compareChanged, { ids: next, count: next.length }); };
+const persist = (ids: string[]) => {
+  const next = [...new Set(ids)].slice(0, 4);
+  writeStorage(STORAGE_KEY, next);
+  emit(EVENTS.compareChanged, { ids: next, count: next.length });
+};
 
 export const useCompareStore = create<CompareState>((set, get) => ({
   ids: [],
@@ -39,9 +43,15 @@ export const useCompareStore = create<CompareState>((set, get) => ({
     set({ ids });
   },
   toggle: (id) => {
-    if (get().has(id)) { get().remove(id); return true; }
+    if (get().has(id)) {
+      get().remove(id);
+      return true;
+    }
     return get().add(id);
   },
-  clear: () => { persist([]); set({ ids: [] }); },
+  clear: () => {
+    persist([]);
+    set({ ids: [] });
+  },
   isFull: () => get().ids.length >= 4,
 }));

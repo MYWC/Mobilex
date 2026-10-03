@@ -31,7 +31,10 @@ export async function requestJson<T>(input: RequestInfo | URL, options: RequestO
     const externalSignal = options.signal;
     const onAbort = () => controller.abort(externalSignal?.reason);
     externalSignal?.addEventListener('abort', onAbort, { once: true });
-    const timeout = globalThis.setTimeout(() => controller.abort(new DOMException('Timeout', 'TimeoutError')), timeoutMs);
+    const timeout = globalThis.setTimeout(
+      () => controller.abort(new DOMException('Timeout', 'TimeoutError')),
+      timeoutMs,
+    );
 
     try {
       const response = await fetch(input, {
@@ -60,7 +63,7 @@ export async function requestJson<T>(input: RequestInfo | URL, options: RequestO
       }
 
       if (response.status === 204) return undefined as T;
-      return await response.json() as T;
+      return (await response.json()) as T;
     } catch (error) {
       const normalized = normalizeError(error);
       if (normalized.retryable && attempt < retries) {

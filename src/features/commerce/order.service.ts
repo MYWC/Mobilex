@@ -19,7 +19,8 @@ export async function buildCheckoutSnapshot(input: {
 }): Promise<CheckoutSnapshot> {
   if (!input.items.length) throw new AppError('VALIDATION', 'سبد خرید خالی است.');
   if (!input.address) throw new AppError('VALIDATION', 'آدرس دریافت انتخاب نشده است.');
-  if (!addressSchema.safeParse(input.address).success) throw new AppError('VALIDATION', 'اطلاعات آدرس معتبر نیست.');
+  if (!addressSchema.safeParse(input.address).success)
+    throw new AppError('VALIDATION', 'اطلاعات آدرس معتبر نیست.');
   if (!input.idempotencyKey) throw new AppError('VALIDATION', 'شناسه تلاش برای سفارش وجود ندارد.');
   const pricing = calculatePricing({
     lines: input.items,
@@ -38,13 +39,17 @@ export async function buildCheckoutSnapshot(input: {
 }
 
 export async function createOrder(snapshot: CheckoutSnapshot): Promise<CreateOrderResult> {
-  if (!snapshot.items.length || !snapshot.address) throw new AppError('VALIDATION', 'اطلاعات سفارش کامل نیست.');
+  if (!snapshot.items.length || !snapshot.address)
+    throw new AppError('VALIDATION', 'اطلاعات سفارش کامل نیست.');
 
   if (!supabase) {
     const orderId = crypto.randomUUID();
     const orderNumber = `MX-${Date.now().toString().slice(-8)}`;
     const createdAt = new Date().toISOString();
-    localStorage.setItem(COMMERCE.lastOrderKey, JSON.stringify({ orderId, orderNumber, createdAt, snapshot }));
+    localStorage.setItem(
+      COMMERCE.lastOrderKey,
+      JSON.stringify({ orderId, orderNumber, createdAt, snapshot }),
+    );
     return {
       orderId,
       orderNumber,
@@ -82,10 +87,13 @@ export async function createOrder(snapshot: CheckoutSnapshot): Promise<CreateOrd
       orderNumber: String(result.order_number),
       status: String(result.status) as CreateOrderResult['status'],
       paymentRequired: Boolean(result.payment_required),
-      paymentStatus: String(result.payment_status || (snapshot.paymentMethod === 'online' ? 'pending' : 'unpaid')) as CreateOrderResult['paymentStatus'],
+      paymentStatus: String(
+        result.payment_status || (snapshot.paymentMethod === 'online' ? 'pending' : 'unpaid'),
+      ) as CreateOrderResult['paymentStatus'],
       totalAmount: Number(result.total_amount || snapshot.pricing.payableTotal),
       idempotent: Boolean(result.idempotent),
-      reservationExpiresAt: typeof result.reservation_expires_at === 'string' ? result.reservation_expires_at : undefined,
+      reservationExpiresAt:
+        typeof result.reservation_expires_at === 'string' ? result.reservation_expires_at : undefined,
     };
 
     if (base.paymentRequired) {

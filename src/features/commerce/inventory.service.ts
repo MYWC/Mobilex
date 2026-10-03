@@ -27,11 +27,16 @@ export async function validateInventory(lines: CartLine[]): Promise<InventoryVal
 
   try {
     const ids = [...new Set(lines.map((line) => line.id))];
-    const variantIds = [...new Set(lines.map((line) => line.variantId).filter((x): x is string => Boolean(x)))];
+    const variantIds = [
+      ...new Set(lines.map((line) => line.variantId).filter((x): x is string => Boolean(x))),
+    ];
     const [products, variants] = await Promise.all([
       supabase.from('products').select('id,price,sale_price,stock,is_active').in('id', ids),
       variantIds.length
-        ? supabase.from('product_variants').select('id,product_id,price,sale_price,stock,is_active').in('id', variantIds)
+        ? supabase
+            .from('product_variants')
+            .select('id,product_id,price,sale_price,stock,is_active')
+            .in('id', variantIds)
         : Promise.resolve({ data: [], error: null }),
     ]);
     if (products.error) throw products.error;
@@ -62,7 +67,8 @@ export async function validateInventory(lines: CartLine[]): Promise<InventoryVal
     const errors = items.flatMap((item) => {
       if (!item.isActive) return [`محصول ${item.productId} دیگر فعال نیست.`];
       if (item.available <= 0) return [`محصول ${item.productId} ناموجود است.`];
-      if (item.requested > item.available) return [`موجودی محصول ${item.productId} فقط ${item.available} عدد است.`];
+      if (item.requested > item.available)
+        return [`موجودی محصول ${item.productId} فقط ${item.available} عدد است.`];
       if (item.priceChanged) return [`قیمت محصول ${item.productId} تغییر کرده است.`];
       return [];
     });

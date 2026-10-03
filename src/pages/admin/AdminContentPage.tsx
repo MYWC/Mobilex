@@ -4,6 +4,158 @@ import { AdminShell } from '@/components/admin/AdminShell';
 import { AdminDataView } from '@/components/admin/AdminDataView';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { listBanners, listContentBlocks, upsertBanner, deleteBanner, upsertContentBlock, deleteContentBlock } from '@/services/admin/admin.service';
+import {
+  listBanners,
+  listContentBlocks,
+  upsertBanner,
+  deleteBanner,
+  upsertContentBlock,
+  deleteContentBlock,
+} from '@/services/admin/admin.service';
 import type { ContentBanner, ContentBlock } from '@/types/admin';
-export function AdminContentPage(){const [banners,setBanners]=useState<ContentBanner[]>([]);const [error,setError]=useState('');const [blocks,setBlocks]=useState<ContentBlock[]>([]);const [title,setTitle]=useState('');const [url,setUrl]=useState('');const [loading,setLoading]=useState(false);const load=async()=>{setError('');try{setBanners(await listBanners());setBlocks(await listContentBlocks())}catch(e){setError(e instanceof Error?e.message:'خطا در دریافت محتوا')}};useEffect(()=>{void load()},[]);const addBanner=async()=>{if(!title.trim())return;setLoading(true);try{await upsertBanner({title,href:url,placement:'home_hero',sortOrder:banners.length+1,isActive:true});setTitle('');setUrl('');await load()}finally{setLoading(false)}};return <AdminShell title="محتوا و بنرها"><div className="mx-admin-stack">{error&&<div className="mx-admin-error">{error}</div>}<AdminDataView title="Hero & Banners" subtitle="محتوای بصری و کمپین‌ها" onRefresh={()=>void load()} actions={<Button size="sm" icon={<Plus size={13}/>} onClick={()=>document.getElementById('banner-form')?.scrollIntoView({behavior:'smooth'})}>بنر جدید</Button>}><div className="mx-admin-content-editor" id="banner-form"><div className="mx-admin-form"><Input label="عنوان بنر" value={title} onChange={e=>setTitle(e.target.value)} placeholder="مثلاً نسل جدید موبایل رسید"/><Input label="لینک مقصد" value={url} onChange={e=>setUrl(e.target.value)} placeholder="/products"/><Button loading={loading} onClick={()=>void addBanner()} icon={<ImagePlus size={14}/>}>انتشار بنر</Button></div><div className="mx-content-list">{banners.map(b=><div className="mx-content-card" key={b.id}><div className="mx-content-preview"><Megaphone size={20}/><span>{b.placement}</span></div><div><strong>{b.title}</strong><small>{b.subtitle||'بدون زیرعنوان'} · {b.href||'بدون لینک'}</small></div><div className="mx-row-actions"><Button size="xs" variant="ghost" icon={<Pencil size={12}/>}>ویرایش</Button><Button size="xs" variant="danger" icon={<Trash2 size={12}/>} onClick={()=>{void deleteBanner(b.id).then(load)}}>حذف</Button></div></div>)}</div></div></AdminDataView><AdminDataView title="Content Blocks" subtitle="متن‌های زنده و بلوک‌های محتوایی" onRefresh={()=>void load()}><div className="mx-content-list">{blocks.map(b=><div className="mx-content-card" key={b.id}><div className="mx-content-preview"><span>{b.kind}</span></div><div><strong>{b.title}</strong><small>{b.key} · {b.body||'بدون متن'}</small></div><div className="mx-row-actions"><Button size="xs" variant="ghost" icon={<Pencil size={12}/>}>ویرایش</Button><Button size="xs" variant="danger" icon={<Trash2 size={12}/>} onClick={()=>{void deleteContentBlock(b.id).then(load)}}>حذف</Button></div></div>)}</div></AdminDataView></div></AdminShell>}
+export function AdminContentPage() {
+  const [banners, setBanners] = useState<ContentBanner[]>([]);
+  const [error, setError] = useState('');
+  const [blocks, setBlocks] = useState<ContentBlock[]>([]);
+  const [title, setTitle] = useState('');
+  const [url, setUrl] = useState('');
+  const [loading, setLoading] = useState(false);
+  const load = async () => {
+    setError('');
+    try {
+      setBanners(await listBanners());
+      setBlocks(await listContentBlocks());
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'خطا در دریافت محتوا');
+    }
+  };
+  useEffect(() => {
+    void load();
+  }, []);
+  const addBanner = async () => {
+    if (!title.trim()) return;
+    setLoading(true);
+    try {
+      await upsertBanner({
+        title,
+        href: url,
+        placement: 'home_hero',
+        sortOrder: banners.length + 1,
+        isActive: true,
+      });
+      setTitle('');
+      setUrl('');
+      await load();
+    } finally {
+      setLoading(false);
+    }
+  };
+  return (
+    <AdminShell title="محتوا و بنرها">
+      <div className="mx-admin-stack">
+        {error && <div className="mx-admin-error">{error}</div>}
+        <AdminDataView
+          title="Hero & Banners"
+          subtitle="محتوای بصری و کمپین‌ها"
+          onRefresh={() => void load()}
+          actions={
+            <Button
+              size="sm"
+              icon={<Plus size={13} />}
+              onClick={() => document.getElementById('banner-form')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              بنر جدید
+            </Button>
+          }
+        >
+          <div className="mx-admin-content-editor" id="banner-form">
+            <div className="mx-admin-form">
+              <Input
+                label="عنوان بنر"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="مثلاً نسل جدید موبایل رسید"
+              />
+              <Input
+                label="لینک مقصد"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="/products"
+              />
+              <Button loading={loading} onClick={() => void addBanner()} icon={<ImagePlus size={14} />}>
+                انتشار بنر
+              </Button>
+            </div>
+            <div className="mx-content-list">
+              {banners.map((b) => (
+                <div className="mx-content-card" key={b.id}>
+                  <div className="mx-content-preview">
+                    <Megaphone size={20} />
+                    <span>{b.placement}</span>
+                  </div>
+                  <div>
+                    <strong>{b.title}</strong>
+                    <small>
+                      {b.subtitle || 'بدون زیرعنوان'} · {b.href || 'بدون لینک'}
+                    </small>
+                  </div>
+                  <div className="mx-row-actions">
+                    <Button size="xs" variant="ghost" icon={<Pencil size={12} />}>
+                      ویرایش
+                    </Button>
+                    <Button
+                      size="xs"
+                      variant="danger"
+                      icon={<Trash2 size={12} />}
+                      onClick={() => {
+                        void deleteBanner(b.id).then(load);
+                      }}
+                    >
+                      حذف
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </AdminDataView>
+        <AdminDataView
+          title="Content Blocks"
+          subtitle="متن‌های زنده و بلوک‌های محتوایی"
+          onRefresh={() => void load()}
+        >
+          <div className="mx-content-list">
+            {blocks.map((b) => (
+              <div className="mx-content-card" key={b.id}>
+                <div className="mx-content-preview">
+                  <span>{b.kind}</span>
+                </div>
+                <div>
+                  <strong>{b.title}</strong>
+                  <small>
+                    {b.key} · {b.body || 'بدون متن'}
+                  </small>
+                </div>
+                <div className="mx-row-actions">
+                  <Button size="xs" variant="ghost" icon={<Pencil size={12} />}>
+                    ویرایش
+                  </Button>
+                  <Button
+                    size="xs"
+                    variant="danger"
+                    icon={<Trash2 size={12} />}
+                    onClick={() => {
+                      void deleteContentBlock(b.id).then(load);
+                    }}
+                  >
+                    حذف
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </AdminDataView>
+      </div>
+    </AdminShell>
+  );
+}

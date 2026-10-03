@@ -3,6 +3,7 @@
 Phase 9 is the Advanced Commerce & Growth layer built on Phase 8.
 
 ## Customer features
+
 - Compare up to 4 products with live product lookup, specifications, pricing, ratings, inventory, and add-to-cart actions.
 - Personalized recommendation engine using recent views, wishlist affinity, category/brand similarity, stock, popularity, rating, newness, and featured signals.
 - Product reviews with rating distribution, submission flow, moderation status, verified-purchase metadata, and helpful RPC.
@@ -14,9 +15,11 @@ Phase 9 is the Advanced Commerce & Growth layer built on Phase 8.
 - Growth telemetry for product views, searches, add-to-cart, wishlist, compare, promotions, reviews, and support.
 
 ## Supabase
+
 Migration: `supabase/migrations/0009_growth_engine.sql`
 
 Adds:
+
 - growth_events
 - product_reviews
 - product_questions
@@ -33,6 +36,7 @@ Adds:
 - question answer-count trigger
 
 ## Release checks performed
+
 - Foundation preflight: PASS
 - Commerce preflight: PASS
 - Phase 5 validation: PASS

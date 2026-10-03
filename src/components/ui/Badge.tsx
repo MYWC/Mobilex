@@ -11,9 +11,11 @@ type BadgeProps = {
   className?: string;
 };
 
-export function Badge({ children, tone='neutral', dot=false, pulse=false, className }: BadgeProps) {
-  return <span className={cn('mx-badge', `mx-badge-${tone}`, className)}>
-    {dot && <span className={cn('mx-badge-dot', pulse && 'mx-badge-dot-pulse')} aria-hidden="true" />}
-    {children}
-  </span>;
+export function Badge({ children, tone = 'neutral', dot = false, pulse = false, className }: BadgeProps) {
+  return (
+    <span className={cn('mx-badge', `mx-badge-${tone}`, className)}>
+      {dot && <span className={cn('mx-badge-dot', pulse && 'mx-badge-dot-pulse')} aria-hidden="true" />}
+      {children}
+    </span>
+  );
 }

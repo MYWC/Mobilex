@@ -5,14 +5,14 @@ import { useCartStore } from '@/features/cart/cart.store';
 import { useWishlistStore } from '@/features/wishlist/wishlist.store';
 
 export interface HealthSnapshot {
-  online:boolean;
-  supabaseConfigured:boolean;
-  authInitialized:boolean;
-  authStatus:string;
-  cartItems:number;
-  cartCount:number;
-  wishlistCount:number;
-  timestamp:string;
+  online: boolean;
+  supabaseConfigured: boolean;
+  authInitialized: boolean;
+  authStatus: string;
+  cartItems: number;
+  cartCount: number;
+  wishlistCount: number;
+  timestamp: string;
 }
 
 export function getClientHealthSnapshot(): HealthSnapshot {

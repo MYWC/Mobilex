@@ -8,5 +8,177 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 
-const empty:CommerceAddress={title:'',recipientName:'',phone:'',province:'',city:'',postalCode:'',addressLine:'',plaque:'',unit:'',notes:'',isDefault:false};
-export function AddressesPage(){const fa=useAppStore(s=>s.locale)==='fa';const[addresses,setAddresses]=useState<CommerceAddress[]>([]);const[editing,setEditing]=useState<CommerceAddress|null>(null);const[saving,setSaving]=useState(false);const load=async()=>setAddresses(await loadAddresses());useEffect(()=>{void load()},[]);const save=async()=>{if(!editing)return;setSaving(true);try{await upsertAddress(editing);setEditing(null);await load()}finally{setSaving(false)}};const del=async(id?:string)=>{if(!id)return;await removeAddress(id);await load()};return <div className="mx-page"><div className="mx-shell mx-account-page"><div className="mx-breadcrumb"><Link to="/account">{fa?'حساب کاربری':'Account'}</Link><span>›</span><strong>{fa?'آدرس‌ها':'Addresses'}</strong></div><div className="mx-account-heading"><div><span className="mx-section-kicker">ADDRESS BOOK</span><h1>{fa?'دفترچه آدرس':'Address book'}</h1><p>{fa?'آدرس‌های شما برای ارسال سفارش‌ها.':'Saved destinations for checkout.'}</p></div><Button onClick={()=>setEditing({...empty})} icon={<Plus size={15}/>}>{fa?'آدرس جدید':'New address'}</Button></div>{addresses.length===0&&!editing?<Card><EmptyState icon={<MapPin size={28}/>} title={fa?'هنوز آدرسی ندارید':'No addresses yet'} description={fa?'یک آدرس اضافه کنید تا Checkout سریع‌تر شود.':'Add an address for faster checkout.'}/></Card>:<div className="mx-address-grid">{addresses.map(a=><Card className="mx-saved-address" key={a.id}><div className="mx-saved-address-head"><div><span className="mx-address-badge"><Home size={13}/>{a.isDefault?(fa?'پیش‌فرض':'Default'):a.title}</span><h3>{a.recipientName}</h3></div><div className="mx-address-actions"><button onClick={()=>setEditing(a)} aria-label="edit"><Pencil size={14}/></button><button className="danger" onClick={()=>void del(a.id)} aria-label="delete"><Trash2 size={14}/></button></div></div><p>{a.province}، {a.city}، {a.addressLine}</p><small>{a.phone} · {fa?'کد پستی':'Postal'} {a.postalCode}</small></Card>)}{editing&&<Card className="mx-address-editor"><div className="mx-card-title"><MapPin size={16}/><h2>{editing.id?(fa?'ویرایش آدرس':'Edit address'):(fa?'آدرس جدید':'New address')}</h2></div><div className="mx-form-grid"><input className="mx-field" value={editing.title} onChange={e=>setEditing({...editing,title:e.target.value})} placeholder={fa?'عنوان آدرس':'Title'}/><input className="mx-field" value={editing.recipientName} onChange={e=>setEditing({...editing,recipientName:e.target.value})} placeholder={fa?'گیرنده':'Recipient'}/><input className="mx-field" value={editing.phone} onChange={e=>setEditing({...editing,phone:e.target.value})} placeholder={fa?'موبایل':'Phone'}/><input className="mx-field" value={editing.province} onChange={e=>setEditing({...editing,province:e.target.value})} placeholder={fa?'استان':'Province'}/><input className="mx-field" value={editing.city} onChange={e=>setEditing({...editing,city:e.target.value})} placeholder={fa?'شهر':'City'}/><input className="mx-field" value={editing.postalCode} onChange={e=>setEditing({...editing,postalCode:e.target.value})} placeholder={fa?'کد پستی':'Postal code'}/></div><textarea className="mx-field mx-textarea" value={editing.addressLine} onChange={e=>setEditing({...editing,addressLine:e.target.value})} placeholder={fa?'نشانی کامل':'Full address'}/><label className="mx-checkbox-row"><input type="checkbox" checked={Boolean(editing.isDefault)} onChange={e=>setEditing({...editing,isDefault:e.target.checked})}/>{fa?'به‌عنوان آدرس پیش‌فرض ذخیره شود':'Set as default'}</label><div className="mx-form-actions"><Button variant="outline" onClick={()=>setEditing(null)}>{fa?'انصراف':'Cancel'}</Button><Button onClick={()=>void save()} loading={saving}>{fa?'ذخیره':'Save'}</Button></div></Card>}</div>}<Link to="/account" className="mx-back-link">‹ {fa?'بازگشت به حساب':'Back to account'}</Link></div></div>}
+const empty: CommerceAddress = {
+  title: '',
+  recipientName: '',
+  phone: '',
+  province: '',
+  city: '',
+  postalCode: '',
+  addressLine: '',
+  plaque: '',
+  unit: '',
+  notes: '',
+  isDefault: false,
+};
+export function AddressesPage() {
+  const fa = useAppStore((s) => s.locale) === 'fa';
+  const [addresses, setAddresses] = useState<CommerceAddress[]>([]);
+  const [editing, setEditing] = useState<CommerceAddress | null>(null);
+  const [saving, setSaving] = useState(false);
+  const load = async () => setAddresses(await loadAddresses());
+  useEffect(() => {
+    void load();
+  }, []);
+  const save = async () => {
+    if (!editing) return;
+    setSaving(true);
+    try {
+      await upsertAddress(editing);
+      setEditing(null);
+      await load();
+    } finally {
+      setSaving(false);
+    }
+  };
+  const del = async (id?: string) => {
+    if (!id) return;
+    await removeAddress(id);
+    await load();
+  };
+  return (
+    <div className="mx-page">
+      <div className="mx-shell mx-account-page">
+        <div className="mx-breadcrumb">
+          <Link to="/account">{fa ? 'حساب کاربری' : 'Account'}</Link>
+          <span>›</span>
+          <strong>{fa ? 'آدرس‌ها' : 'Addresses'}</strong>
+        </div>
+        <div className="mx-account-heading">
+          <div>
+            <span className="mx-section-kicker">ADDRESS BOOK</span>
+            <h1>{fa ? 'دفترچه آدرس' : 'Address book'}</h1>
+            <p>{fa ? 'آدرس‌های شما برای ارسال سفارش‌ها.' : 'Saved destinations for checkout.'}</p>
+          </div>
+          <Button onClick={() => setEditing({ ...empty })} icon={<Plus size={15} />}>
+            {fa ? 'آدرس جدید' : 'New address'}
+          </Button>
+        </div>
+        {addresses.length === 0 && !editing ? (
+          <Card>
+            <EmptyState
+              icon={<MapPin size={28} />}
+              title={fa ? 'هنوز آدرسی ندارید' : 'No addresses yet'}
+              description={
+                fa ? 'یک آدرس اضافه کنید تا Checkout سریع‌تر شود.' : 'Add an address for faster checkout.'
+              }
+            />
+          </Card>
+        ) : (
+          <div className="mx-address-grid">
+            {addresses.map((a) => (
+              <Card className="mx-saved-address" key={a.id}>
+                <div className="mx-saved-address-head">
+                  <div>
+                    <span className="mx-address-badge">
+                      <Home size={13} />
+                      {a.isDefault ? (fa ? 'پیش‌فرض' : 'Default') : a.title}
+                    </span>
+                    <h3>{a.recipientName}</h3>
+                  </div>
+                  <div className="mx-address-actions">
+                    <button onClick={() => setEditing(a)} aria-label="edit">
+                      <Pencil size={14} />
+                    </button>
+                    <button className="danger" onClick={() => void del(a.id)} aria-label="delete">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+                <p>
+                  {a.province}، {a.city}، {a.addressLine}
+                </p>
+                <small>
+                  {a.phone} · {fa ? 'کد پستی' : 'Postal'} {a.postalCode}
+                </small>
+              </Card>
+            ))}
+            {editing && (
+              <Card className="mx-address-editor">
+                <div className="mx-card-title">
+                  <MapPin size={16} />
+                  <h2>
+                    {editing.id ? (fa ? 'ویرایش آدرس' : 'Edit address') : fa ? 'آدرس جدید' : 'New address'}
+                  </h2>
+                </div>
+                <div className="mx-form-grid">
+                  <input
+                    className="mx-field"
+                    value={editing.title}
+                    onChange={(e) => setEditing({ ...editing, title: e.target.value })}
+                    placeholder={fa ? 'عنوان آدرس' : 'Title'}
+                  />
+                  <input
+                    className="mx-field"
+                    value={editing.recipientName}
+                    onChange={(e) => setEditing({ ...editing, recipientName: e.target.value })}
+                    placeholder={fa ? 'گیرنده' : 'Recipient'}
+                  />
+                  <input
+                    className="mx-field"
+                    value={editing.phone}
+                    onChange={(e) => setEditing({ ...editing, phone: e.target.value })}
+                    placeholder={fa ? 'موبایل' : 'Phone'}
+                  />
+                  <input
+                    className="mx-field"
+                    value={editing.province}
+                    onChange={(e) => setEditing({ ...editing, province: e.target.value })}
+                    placeholder={fa ? 'استان' : 'Province'}
+                  />
+                  <input
+                    className="mx-field"
+                    value={editing.city}
+                    onChange={(e) => setEditing({ ...editing, city: e.target.value })}
+                    placeholder={fa ? 'شهر' : 'City'}
+                  />
+                  <input
+                    className="mx-field"
+                    value={editing.postalCode}
+                    onChange={(e) => setEditing({ ...editing, postalCode: e.target.value })}
+                    placeholder={fa ? 'کد پستی' : 'Postal code'}
+                  />
+                </div>
+                <textarea
+                  className="mx-field mx-textarea"
+                  value={editing.addressLine}
+                  onChange={(e) => setEditing({ ...editing, addressLine: e.target.value })}
+                  placeholder={fa ? 'نشانی کامل' : 'Full address'}
+                />
+                <label className="mx-checkbox-row">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(editing.isDefault)}
+                    onChange={(e) => setEditing({ ...editing, isDefault: e.target.checked })}
+                  />
+                  {fa ? 'به‌عنوان آدرس پیش‌فرض ذخیره شود' : 'Set as default'}
+                </label>
+                <div className="mx-form-actions">
+                  <Button variant="outline" onClick={() => setEditing(null)}>
+                    {fa ? 'انصراف' : 'Cancel'}
+                  </Button>
+                  <Button onClick={() => void save()} loading={saving}>
+                    {fa ? 'ذخیره' : 'Save'}
+                  </Button>
+                </div>
+              </Card>
+            )}
+          </div>
+        )}
+        <Link to="/account" className="mx-back-link">
+          ‹ {fa ? 'بازگشت به حساب' : 'Back to account'}
+        </Link>
+      </div>
+    </div>
+  );
+}

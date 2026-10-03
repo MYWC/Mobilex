@@ -4,18 +4,36 @@ import process from 'node:process';
 
 const root = process.cwd();
 const required = [
-  'index.html', 'package.json', 'vite.config.ts', 'tsconfig.json', 'vitest.config.ts',
-  'src/App.tsx', 'src/main.tsx', 'src/app/router/AppRouter.tsx',
-  'src/app/router/guards.tsx', 'src/app/routes/routeConfig.ts',
-  'src/app/providers/AppProviders.tsx', 'src/app/config/env.ts', 'src/app/config/constants.ts',
-  'src/stores/useAppStore.ts', 'src/stores/useAuthStore.ts', 'src/stores/useRuntimeStore.ts',
-  'src/features/cart/cart.store.ts', 'src/features/wishlist/wishlist.store.ts',
+  'index.html',
+  'package.json',
+  'vite.config.ts',
+  'tsconfig.json',
+  'vitest.config.ts',
+  'src/App.tsx',
+  'src/main.tsx',
+  'src/app/router/AppRouter.tsx',
+  'src/app/router/guards.tsx',
+  'src/app/routes/routeConfig.ts',
+  'src/app/providers/AppProviders.tsx',
+  'src/app/config/env.ts',
+  'src/app/config/constants.ts',
+  'src/stores/useAppStore.ts',
+  'src/stores/useAuthStore.ts',
+  'src/stores/useRuntimeStore.ts',
+  'src/features/cart/cart.store.ts',
+  'src/features/wishlist/wishlist.store.ts',
   'src/features/notifications/notification.store.ts',
-  'src/lib/storage/storage.ts', 'src/lib/storage/migrations.ts',
-  'src/lib/errors/app-error.ts', 'src/lib/events/bus.ts',
-  'src/lib/supabase/client.ts', 'src/lib/supabase/repository.ts',
-  'src/lib/api/http.ts', 'src/lib/auth/permissions.ts',
-  'src/lib/validation/schemas.ts', 'src/styles/globals.css', 'src/styles/tokens.css',
+  'src/lib/storage/storage.ts',
+  'src/lib/storage/migrations.ts',
+  'src/lib/errors/app-error.ts',
+  'src/lib/events/bus.ts',
+  'src/lib/supabase/client.ts',
+  'src/lib/supabase/repository.ts',
+  'src/lib/api/http.ts',
+  'src/lib/auth/permissions.ts',
+  'src/lib/validation/schemas.ts',
+  'src/styles/globals.css',
+  'src/styles/tokens.css',
 ];
 
 const missing = required.filter((file) => !fs.existsSync(path.join(root, file)));
@@ -26,7 +44,7 @@ if (missing.length) {
 }
 
 const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
-const requiredScripts = ['dev','build','typecheck','test','lint','format:check','quality'];
+const requiredScripts = ['dev', 'build', 'typecheck', 'test', 'lint', 'format:check', 'quality'];
 const missingScripts = requiredScripts.filter((name) => !pkg.scripts?.[name]);
 if (missingScripts.length) {
   console.error(`Missing npm scripts: ${missingScripts.join(', ')}`);
@@ -49,4 +67,6 @@ if (/service[_-]?role/i.test(source)) {
   process.exit(1);
 }
 
-console.log(`Foundation preflight passed: ${required.length} required files, ${sourceFiles.length} source files scanned.`);
+console.log(
+  `Foundation preflight passed: ${required.length} required files, ${sourceFiles.length} source files scanned.`,
+);

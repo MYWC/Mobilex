@@ -1,20 +1,52 @@
 import type { UserRole } from '@/types/core';
 
 export type Permission =
-  | 'catalog.read' | 'catalog.write'
-  | 'inventory.read' | 'inventory.write'
-  | 'orders.read' | 'orders.write'
-  | 'users.read' | 'users.write'
-  | 'content.read' | 'content.write'
-  | 'analytics.read' | 'audit.read'
-  | 'roles.read' | 'roles.write'
-  | 'settings.read' | 'settings.write';
+  | 'catalog.read'
+  | 'catalog.write'
+  | 'inventory.read'
+  | 'inventory.write'
+  | 'orders.read'
+  | 'orders.write'
+  | 'users.read'
+  | 'users.write'
+  | 'content.read'
+  | 'content.write'
+  | 'analytics.read'
+  | 'audit.read'
+  | 'roles.read'
+  | 'roles.write'
+  | 'settings.read'
+  | 'settings.write';
 
 const rolePermissions: Record<UserRole, readonly Permission[]> = {
-  admin: ['catalog.read','catalog.write','inventory.read','inventory.write','orders.read','orders.write','users.read','users.write','content.read','content.write','analytics.read','audit.read','roles.read','roles.write','settings.read','settings.write'],
-  product_manager: ['catalog.read','catalog.write','inventory.read','inventory.write','orders.read','analytics.read'],
-  warehouse: ['orders.read','orders.write','catalog.read','inventory.read','inventory.write'],
-  support: ['orders.read','orders.write','users.read','catalog.read','content.read'],
+  admin: [
+    'catalog.read',
+    'catalog.write',
+    'inventory.read',
+    'inventory.write',
+    'orders.read',
+    'orders.write',
+    'users.read',
+    'users.write',
+    'content.read',
+    'content.write',
+    'analytics.read',
+    'audit.read',
+    'roles.read',
+    'roles.write',
+    'settings.read',
+    'settings.write',
+  ],
+  product_manager: [
+    'catalog.read',
+    'catalog.write',
+    'inventory.read',
+    'inventory.write',
+    'orders.read',
+    'analytics.read',
+  ],
+  warehouse: ['orders.read', 'orders.write', 'catalog.read', 'inventory.read', 'inventory.write'],
+  support: ['orders.read', 'orders.write', 'users.read', 'catalog.read', 'content.read'],
   customer: [],
 };
 

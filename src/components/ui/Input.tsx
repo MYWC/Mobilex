@@ -17,7 +17,17 @@ export function Input({ label, hint, error, leading, trailing, className, id, ..
       {label && <span className="mx-field-label">{label}</span>}
       <span className={cn('mx-input-shell', error && 'mx-input-error')}>
         {leading && <span className="mx-input-affix">{leading}</span>}
-        <input id={inputId} className={cn('mx-input', Boolean(leading) && 'has-leading', Boolean(trailing) && 'has-trailing', className)} aria-invalid={Boolean(error)} {...props} />
+        <input
+          id={inputId}
+          className={cn(
+            'mx-input',
+            Boolean(leading) && 'has-leading',
+            Boolean(trailing) && 'has-trailing',
+            className,
+          )}
+          aria-invalid={Boolean(error)}
+          {...props}
+        />
         {trailing && <span className="mx-input-affix">{trailing}</span>}
       </span>
       {(error || hint) && <span className={cn('mx-field-help', error && 'is-error')}>{error || hint}</span>}

@@ -7,17 +7,21 @@ import { useAuthStore } from '@/stores/useAuthStore';
 export function RequireAuth({ children }: PropsWithChildren) {
   const location = useLocation();
   const { initialized, status } = useAuthStore();
-  if (!initialized || status === 'loading' || status === 'idle') return <div className="route-loading">در حال بررسی نشست کاربر…</div>;
+  if (!initialized || status === 'loading' || status === 'idle')
+    return <div className="route-loading">در حال بررسی نشست کاربر…</div>;
   if (status !== 'authenticated') {
     const next = `${location.pathname}${location.search}${location.hash}`;
-    return <Navigate to={`${routes.login}?next=${encodeURIComponent(next)}`} replace state={{ from: location }} />;
+    return (
+      <Navigate to={`${routes.login}?next=${encodeURIComponent(next)}`} replace state={{ from: location }} />
+    );
   }
   return children;
 }
 
 export function GuestOnly({ children }: PropsWithChildren) {
   const { initialized, status } = useAuthStore();
-  if (!initialized || status === 'loading' || status === 'idle') return <div className="route-loading">در حال بررسی نشست کاربر…</div>;
+  if (!initialized || status === 'loading' || status === 'idle')
+    return <div className="route-loading">در حال بررسی نشست کاربر…</div>;
   if (status === 'authenticated') return <Navigate to={routes.profile} replace />;
   return children;
 }

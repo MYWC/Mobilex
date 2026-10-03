@@ -9,5 +9,15 @@ import { usePlatformEffects } from '@/hooks/usePlatformEffects';
 
 export function PlatformLayer() {
   usePlatformEffects();
-  return <><SkipLink/><RouteAnnouncer/><OfflineBanner/><InstallPrompt/><UpdatePrompt/><NavigationEffects/><CommandPalette/></>;
+  return (
+    <>
+      <SkipLink />
+      <RouteAnnouncer />
+      <OfflineBanner />
+      <InstallPrompt />
+      <UpdatePrompt />
+      <NavigationEffects />
+      <CommandPalette />
+    </>
+  );
 }

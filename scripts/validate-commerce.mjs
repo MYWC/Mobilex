@@ -26,8 +26,19 @@ if (missing.length) {
   process.exit(1);
 }
 
-const sql = readFileSync(resolve(root, 'supabase/migrations/0006_commerce_inventory_payment_lifecycle.sql'), 'utf8');
-for (const token of ['mx_create_order', 'mx_cancel_order', 'mx_mark_payment_result', 'mx_expire_inventory_reservations', 'inventory_reservations', 'coupon_usages', 'idempotency_key']) {
+const sql = readFileSync(
+  resolve(root, 'supabase/migrations/0006_commerce_inventory_payment_lifecycle.sql'),
+  'utf8',
+);
+for (const token of [
+  'mx_create_order',
+  'mx_cancel_order',
+  'mx_mark_payment_result',
+  'mx_expire_inventory_reservations',
+  'inventory_reservations',
+  'coupon_usages',
+  'idempotency_key',
+]) {
   if (!sql.includes(token)) {
     console.error(`Commerce validation failed. Missing SQL contract: ${token}`);
     process.exit(1);

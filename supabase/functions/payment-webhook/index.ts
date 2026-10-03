@@ -6,7 +6,13 @@ function toHex(bytes: Uint8Array): string {
 }
 
 async function hmacHex(secret: string, raw: string): Promise<string> {
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
   return toHex(new Uint8Array(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(raw))));
 }
 
@@ -26,8 +32,12 @@ serve(async (req) => {
   const raw = await req.text();
   const signature = req.headers.get('x-payment-signature') || '';
   const expected = await hmacHex(secret, raw);
-  const provided = signature.replace(/^sha256=/i, '').trim().toLowerCase();
-  if (!provided || !secureEqual(provided, expected)) return Response.json({ error: 'invalid_signature' }, { status: 401 });
+  const provided = signature
+    .replace(/^sha256=/i, '')
+    .trim()
+    .toLowerCase();
+  if (!provided || !secureEqual(provided, expected))
+    return Response.json({ error: 'invalid_signature' }, { status: 401 });
 
   try {
     const payload = JSON.parse(raw) as Record<string, unknown>;
@@ -37,22 +47,48 @@ serve(async (req) => {
     const provider = String(payload.provider || Deno.env.get('PAYMENT_PROVIDER') || 'gateway');
     const eventId = String(payload.eventId || payload.event_id || paymentId || crypto.randomUUID());
     const amount = Number(payload.amount || 0);
-    if (!orderId || !paymentId || !['paid', 'failed', 'cancelled'].includes(status)) return Response.json({ error: 'invalid_payload' }, { status: 400 });
+    if (!orderId || !paymentId || !['paid', 'failed', 'cancelled'].includes(status))
+      return Response.json({ error: 'invalid_payload' }, { status: 400 });
 
-    const serviceClient = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
-    const { data: existing } = await serviceClient.from('payment_webhook_events').select('id,processed_at').eq('provider', provider).eq('event_id', eventId).maybeSingle();
+    const serviceClient = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    );
+    const { data: existing } = await serviceClient
+      .from('payment_webhook_events')
+      .select('id,processed_at')
+      .eq('provider', provider)
+      .eq('event_id', eventId)
+      .maybeSingle();
     if (existing?.processed_at) return Response.json({ ok: true, duplicate: true });
 
-    const { data: order, error: orderError } = await serviceClient.from('orders').select('id,total_amount,currency,status,payment_status').eq('id', orderId).maybeSingle();
+    const { data: order, error: orderError } = await serviceClient
+      .from('orders')
+      .select('id,total_amount,currency,status,payment_status')
+      .eq('id', orderId)
+      .maybeSingle();
     if (orderError) throw orderError;
     if (!order) return Response.json({ error: 'ORDER_NOT_FOUND' }, { status: 404 });
-    if (Number.isFinite(amount) && amount > 0 && Math.abs(Number(order.total_amount) - amount) > 0.001) return Response.json({ error: 'AMOUNT_MISMATCH' }, { status: 409 });
+    if (Number.isFinite(amount) && amount > 0 && Math.abs(Number(order.total_amount) - amount) > 0.001)
+      return Response.json({ error: 'AMOUNT_MISMATCH' }, { status: 409 });
 
     if (!existing) {
       const { error: insertError } = await serviceClient.from('payment_webhook_events').insert({
-        event_id: eventId, provider, order_id: orderId, payment_id: paymentId, status, amount: Number.isFinite(amount) ? amount : Number(order.total_amount), payload,
+        event_id: eventId,
+        provider,
+        order_id: orderId,
+        payment_id: paymentId,
+        status,
+        amount: Number.isFinite(amount) ? amount : Number(order.total_amount),
+        payload,
       });
-      if (insertError && !String(insertError.message || '').toLowerCase().includes('duplicate')) throw insertError;
+      if (
+        insertError &&
+        !String(insertError.message || '')
+          .toLowerCase()
+          .includes('duplicate')
+      )
+        throw insertError;
     }
 
     const { error } = await serviceClient.rpc('mx_mark_payment_result', {
@@ -64,9 +100,11 @@ serve(async (req) => {
     });
     if (error) throw error;
 
-    const { error: markProcessedError } = await serviceClient.from('payment_webhook_events')
+    const { error: markProcessedError } = await serviceClient
+      .from('payment_webhook_events')
       .update({ processed_at: new Date().toISOString() })
-      .eq('provider', provider).eq('event_id', eventId);
+      .eq('provider', provider)
+      .eq('event_id', eventId);
     if (markProcessedError) throw markProcessedError;
 
     return Response.json({ ok: true, orderId, paymentId, status });

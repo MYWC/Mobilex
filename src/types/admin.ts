@@ -1,4 +1,12 @@
-export type AdminOrderStatus = 'pending_payment' | 'processing' | 'paid' | 'packed' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
+export type AdminOrderStatus =
+  | 'pending_payment'
+  | 'processing'
+  | 'paid'
+  | 'packed'
+  | 'shipped'
+  | 'delivered'
+  | 'cancelled'
+  | 'returned';
 export type AdminPaymentStatus = 'pending' | 'unpaid' | 'paid' | 'failed' | 'cancelled' | 'refunded';
 
 export interface AdminMetric {

@@ -18,21 +18,34 @@ function hasLocalStorage(): boolean {
 
 function rawGet(key: string): string | null {
   if (hasLocalStorage()) {
-    try { return window.localStorage.getItem(key); } catch { /* fall through */ }
+    try {
+      return window.localStorage.getItem(key);
+    } catch {
+      /* fall through */
+    }
   }
   return memoryFallback.get(key) ?? null;
 }
 
 function rawSet(key: string, value: string): void {
   if (hasLocalStorage()) {
-    try { window.localStorage.setItem(key, value); return; } catch { /* fall through */ }
+    try {
+      window.localStorage.setItem(key, value);
+      return;
+    } catch {
+      /* fall through */
+    }
   }
   memoryFallback.set(key, value);
 }
 
 function rawRemove(key: string): void {
   if (hasLocalStorage()) {
-    try { window.localStorage.removeItem(key); } catch { /* fall through */ }
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      /* fall through */
+    }
   }
   memoryFallback.delete(key);
 }
@@ -47,11 +60,7 @@ export function readStorage<T>(key: string, fallback: T): T {
   }
 }
 
-export function readValidatedStorage<T>(
-  key: string,
-  schema: ZodType<T>,
-  fallback: T,
-): T {
+export function readValidatedStorage<T>(key: string, schema: ZodType<T>, fallback: T): T {
   const result = schema.safeParse(readStorage<unknown>(key, fallback));
   if (!result.success) {
     rawRemove(key);
@@ -78,11 +87,13 @@ export function readVersionedStorage<T>(
   const envelope = readStorage<unknown>(key, null);
   if (!envelope || typeof envelope !== 'object') return fallback;
 
-  const parsed = z.object({
-    version: z.number().int().nonnegative(),
-    value: schema,
-    updatedAt: z.number().int().nonnegative(),
-  }).safeParse(envelope);
+  const parsed = z
+    .object({
+      version: z.number().int().nonnegative(),
+      value: schema,
+      updatedAt: z.number().int().nonnegative(),
+    })
+    .safeParse(envelope);
 
   if (!parsed.success || parsed.data.version !== expectedVersion) return fallback;
   return parsed.data.value;
@@ -97,20 +108,25 @@ export function clearStorageNamespace(prefix: string): void {
     try {
       const keys = Object.keys(window.localStorage);
       keys.filter((key) => key.startsWith(prefix)).forEach((key) => window.localStorage.removeItem(key));
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }
-  [...memoryFallback.keys()].filter((key) => key.startsWith(prefix)).forEach((key) => memoryFallback.delete(key));
+  [...memoryFallback.keys()]
+    .filter((key) => key.startsWith(prefix))
+    .forEach((key) => memoryFallback.delete(key));
 }
 
-export function subscribeStorage<T>(
-  key: string,
-  callback: (value: T | null) => void,
-): () => void {
+export function subscribeStorage<T>(key: string, callback: (value: T | null) => void): () => void {
   if (typeof window === 'undefined') return () => undefined;
   const listener = (event: StorageEvent) => {
     if (event.key !== key) return;
     if (event.newValue == null) return callback(null);
-    try { callback(JSON.parse(event.newValue) as T); } catch { callback(null); }
+    try {
+      callback(JSON.parse(event.newValue) as T);
+    } catch {
+      callback(null);
+    }
   };
   window.addEventListener('storage', listener);
   return () => window.removeEventListener('storage', listener);

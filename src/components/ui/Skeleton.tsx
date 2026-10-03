@@ -6,11 +6,16 @@ export function Skeleton({ className, ...props }: HTMLAttributes<HTMLDivElement>
 }
 
 export function ProductSkeleton() {
-  return <div className="mx-skeleton-product" aria-hidden="true">
-    <Skeleton className="ratio-product" />
-    <Skeleton className="line w-35" />
-    <Skeleton className="line w-75" />
-    <Skeleton className="line w-55" />
-    <div className="skeleton-row"><Skeleton className="line w-35" /><Skeleton className="pill-shape" /></div>
-  </div>;
+  return (
+    <div className="mx-skeleton-product" aria-hidden="true">
+      <Skeleton className="ratio-product" />
+      <Skeleton className="line w-35" />
+      <Skeleton className="line w-75" />
+      <Skeleton className="line w-55" />
+      <div className="skeleton-row">
+        <Skeleton className="line w-35" />
+        <Skeleton className="pill-shape" />
+      </div>
+    </div>
+  );
 }

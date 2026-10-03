@@ -14,12 +14,16 @@ interface PwaState {
   promptInstall: () => Promise<boolean>;
   applyUpdate: () => void;
 }
-export interface BeforeInstallPromptEvent extends Event { prompt: () => Promise<void>; userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>; }
+export interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+}
 
 export const usePwaStore = create<PwaState>((set, get) => ({
   supported: typeof navigator !== 'undefined' && 'serviceWorker' in navigator,
   installable: false,
-  installed: typeof window !== 'undefined' && window.matchMedia?.('(display-mode: standalone)').matches === true,
+  installed:
+    typeof window !== 'undefined' && window.matchMedia?.('(display-mode: standalone)').matches === true,
   updateAvailable: false,
   registration: null,
   deferredPrompt: null,
@@ -28,8 +32,12 @@ export const usePwaStore = create<PwaState>((set, get) => ({
   setUpdateAvailable: (registration) => set({ updateAvailable: Boolean(registration), registration }),
   setRegistration: (registration) => set({ registration }),
   promptInstall: async () => {
-    const prompt = get().deferredPrompt; if (!prompt) return false;
-    await prompt.prompt(); const choice = await prompt.userChoice; set({ installable: false, deferredPrompt: null, installed: choice.outcome === 'accepted' }); return choice.outcome === 'accepted';
+    const prompt = get().deferredPrompt;
+    if (!prompt) return false;
+    await prompt.prompt();
+    const choice = await prompt.userChoice;
+    set({ installable: false, deferredPrompt: null, installed: choice.outcome === 'accepted' });
+    return choice.outcome === 'accepted';
   },
   applyUpdate: () => {
     const registration = get().registration;
